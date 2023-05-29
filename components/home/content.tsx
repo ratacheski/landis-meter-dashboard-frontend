@@ -3,7 +3,6 @@ import {Text, Link} from '@nextui-org/react';
 import {Box} from '../styles/box';
 import dynamic from 'next/dynamic';
 import {Flex} from '../styles/flex';
-import {TableWrapper} from '../table/table';
 import NextLink from 'next/link';
 import {CardBalance1} from './card-balance1';
 import {CardBalance2} from './card-balance2';
@@ -185,7 +184,6 @@ export const Content = () => (
                </Link>
             </NextLink>
          </Flex>
-         <TableWrapper />
       </Flex>
    </Box>
 );

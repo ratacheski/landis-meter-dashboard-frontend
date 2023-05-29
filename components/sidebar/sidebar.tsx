@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {Box} from '../styles/box';
 import {Sidebar} from './sidebar.styles';
 import {Avatar, Tooltip} from '@nextui-org/react';
@@ -56,15 +56,16 @@ export const SidebarWrapper = () => {
                   />
                   <SidebarMenu title="Main Menu">
                      <SidebarItem
+                        isActive={router.pathname === '/variaveis'}
+                        title="Variáveis"
+                        icon={<PaymentsIcon />}
+                        href="/variaveis"
+                     />
+                     <SidebarItem
                         isActive={router.pathname === '/accounts'}
                         title="Accounts"
                         icon={<AccountsIcon />}
-                        href="accounts"
-                     />
-                     <SidebarItem
-                        isActive={router.pathname === '/payments'}
-                        title="Payments"
-                        icon={<PaymentsIcon />}
+                        href="/accounts"
                      />
                      <CollapseItems
                         icon={<BalanceIcon />}

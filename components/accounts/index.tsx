@@ -10,7 +10,6 @@ import {HouseIcon} from '../icons/breadcrumb/house-icon';
 import {UsersIcon} from '../icons/breadcrumb/users-icon';
 import {SettingsIcon} from '../icons/sidebar/settings-icon';
 import {Flex} from '../styles/flex';
-import {TableWrapper} from '../table/table';
 import {AddUser} from './add-user';
 
 export const Accounts = () => {
@@ -77,8 +76,6 @@ export const Accounts = () => {
                </Button>
             </Flex>
          </Flex>
-
-         <TableWrapper />
       </Flex>
    );
 };

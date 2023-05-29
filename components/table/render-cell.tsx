@@ -1,90 +1,73 @@
-import {Col, Row, User, Text, Tooltip} from '@nextui-org/react';
-import React from 'react';
-import {DeleteIcon} from '../icons/table/delete-icon';
-import {EditIcon} from '../icons/table/edit-icon';
-import {EyeIcon} from '../icons/table/eye-icon';
-import {users} from './data';
-import {IconButton, StyledBadge} from './table.styled';
+import {Button, Col, Row, Tooltip} from "@nextui-org/react";
+import React from "react";
+import {DeleteIcon} from "../icons/table/delete-icon";
+import {EditIcon} from "../icons/table/edit-icon";
+import {EyeIcon} from "../icons/table/eye-icon";
+import {TableAction} from "./data-table.interface";
+import {IconButton} from "./table.styled";
 
 interface Props {
-   user: typeof users[number];
-   columnKey: string | React.Key;
+    item: any;
+    columnKey: string | React.Key;
+    actions: TableAction[];
 }
 
-export const RenderCell = ({user, columnKey}: Props) => {
-   // @ts-ignore
-   const cellValue = user[columnKey];
-   switch (columnKey) {
-      case 'name':
-         return (
-            <User squared src={user.avatar} name={cellValue} css={{p: 0}}>
-               {user.email}
-            </User>
-         );
-      case 'role':
-         return (
-            <Col>
-               <Row>
-                  <Text b size={14} css={{tt: 'capitalize'}}>
-                     {cellValue}
-                  </Text>
-               </Row>
-               <Row>
-                  <Text
-                     b
-                     size={13}
-                     css={{tt: 'capitalize', color: '$accents7'}}
-                  >
-                     {user.team}
-                  </Text>
-               </Row>
-            </Col>
-         );
-      case 'status':
-         return (
-            // @ts-ignore
-            <StyledBadge type={String(user.status)}>{cellValue}</StyledBadge>
-         );
+const renderButton = (action: TableAction, item: any) => {
+    switch (action.icon) {
+        case "delete":
+            return (
+                <IconButton onClick={() => action.onClick(item)}>
+                    <DeleteIcon size={25} fill={action.color || "#FF0080"}/>
+                </IconButton>
+            );
+        case "edit":
+            return (
+                <IconButton onClick={() => action.onClick(item)}>
+                    <EditIcon size={25} fill={action.color || "#979797"}/>
+                </IconButton>
+            );
+        case "detail":
+            return (
+                <IconButton onClick={() => action.onClick(item)}>
+                    <EyeIcon size={25} fill={action.color || "#979797"}/>
+                </IconButton>
+            );
+        default:
+            return (
+                <Button            // @ts-ignore
+                    color={action.color || "primary"}
+                    auto
+                    onClick={() => action.onClick(item)}
+                >
+                    {action.name}
+                </Button>
+            );
+    }
+};
 
-      case 'actions':
-         return (
-            <Row
-               justify="center"
-               align="center"
-               css={{'gap': '$8', '@md': {gap: 0}}}
-            >
-               <Col css={{d: 'flex'}}>
-                  <Tooltip content="Details">
-                     <IconButton
-                        onClick={() => console.log('View user', user.id)}
-                     >
-                        <EyeIcon size={20} fill="#979797" />
-                     </IconButton>
-                  </Tooltip>
-               </Col>
-               <Col css={{d: 'flex'}}>
-                  <Tooltip content="Edit user">
-                     <IconButton
-                        onClick={() => console.log('Edit user', user.id)}
-                     >
-                        <EditIcon size={20} fill="#979797" />
-                     </IconButton>
-                  </Tooltip>
-               </Col>
-               <Col css={{d: 'flex'}}>
-                  <Tooltip
-                     content="Delete user"
-                     color="error"
-                     onClick={() => console.log('Delete user', user.id)}
-                  >
-                     <IconButton>
-                        <DeleteIcon size={20} fill="#FF0080" />
-                     </IconButton>
-                  </Tooltip>
-               </Col>
-            </Row>
-         );
-      default:
-         return cellValue;
-   }
+export const RenderCell = ({item, columnKey, actions}: Props) => {
+    // @ts-ignore
+    const cellValue = item[columnKey];
+    switch (columnKey) {
+        case "actions":
+            return (
+                <Row
+                    justify="center"
+                    align="center"
+                    css={{gap: "$8", "@md": {gap: 0}}}
+                >
+                    {actions.map((action) => {
+                        return (
+                            <Col css={{d: "flex"}} key={action.name}>
+                                <Tooltip content={action.tooltip}>
+                                    {renderButton(action, item)}
+                                </Tooltip>
+                            </Col>
+                        );
+                    })}
+                </Row>
+            );
+        default:
+            return cellValue;
+    }
 };
