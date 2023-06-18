@@ -17,6 +17,7 @@ type VariaveisProps = {
 };
 type Variable = {
     id?: string;
+    code?: string;
     name?: string;
     acronym?: string;
     unit?: string;
@@ -28,6 +29,7 @@ export const Variaveis = ({variables}: VariaveisProps) => {
     const [deleteVisible, setDeleteVisible] = React.useState(false);
     const [itemToDelete, setItemToDelete] = React.useState<Variable>({});
     const columns: TableColumn[] = [
+        {name: "Código", uid: "code"},
         {name: "Nome", uid: "name"},
         {name: "Sigla", uid: "acronym"},
         {name: "Unidade", uid: "unit"},

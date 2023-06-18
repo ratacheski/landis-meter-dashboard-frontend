@@ -10,13 +10,14 @@ type VariaveisProps = {
 };
 type Variable = {
     id?: string;
+    code?: string;
     name?: string;
     acronym?: string;
     unit?: string;
 };
 
 type FormItems = {
-    property: "id" | "name" | "acronym" | "unit";
+    property: "code" | "name" | "acronym" | "unit";
     errorMessage?: string;
     label: string;
     placeholder: string;
@@ -28,11 +29,11 @@ export const FormVariable = ({variable}: VariaveisProps) => {
 
     const formItems: FormItems[] = [
         {
-            property: "id",
-            readOnly: !!variable.id,
-            errorMessage: 'ID é obrigatório',
-            label: "ID",
-            placeholder: "Identificador",
+            property: "code",
+            readOnly: !!variable.code,
+            errorMessage: 'Código é obrigatório',
+            label: "Código",
+            placeholder: "Código da Variável",
             cols: 6,
             required: true
         },

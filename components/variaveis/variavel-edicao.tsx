@@ -13,6 +13,7 @@ type VariaveisProps = {
 };
 type Variable = {
     id?: string;
+    code?: string;
     name?: string;
     acronym?: string;
     unit?: string;
