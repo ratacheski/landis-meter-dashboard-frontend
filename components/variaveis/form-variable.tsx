@@ -1,9 +1,11 @@
-import {Button, Grid, Input} from '@nextui-org/react';
-import React from 'react';
-import {Flex} from '../styles/flex';
-import {useForm} from "react-hook-form";
-import {useRouter} from "next/router";
-import {getBaseUrl} from "../../shared/utils/apiUtil";
+import { Button, Grid, Input } from '@nextui-org/react';
+import React, { useState } from 'react';
+import { Flex } from '../styles/flex';
+import { useForm } from 'react-hook-form';
+import { useRouter } from 'next/router';
+import { getBaseUrl } from '../../shared/utils/apiUtil';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 type VariaveisProps = {
     variable: Variable;
@@ -72,70 +74,79 @@ export const FormVariable = ({variable}: VariaveisProps) => {
         const url = `${getBaseUrl()}/variable${variable.id ? `/${variable.id}` : ''}`;
         const method = variable.id ? 'PUT' : 'POST'
 
-        fetch(url, {
-            method: method,
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json;charset=UTF-8'
-            },
-            body: JSON.stringify(data)
-        }).then(() => {
-            //TO-DO: Implementar uso de snackbar para exibir mensagem de erro ou sucesso
-            router.push("/variaveis")
-        })
-    });
+    fetch(url, {
+      method: method,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
+      },
+      body: JSON.stringify(data)
+    })
+      .then((response) => {
+        if (response.ok) {
+            toast.success('Variável registrada com sucesso');
+        } else {
+            toast.error('Ocorreu um erro ao salvar variável');
+        }
+      })
+      .catch(() => {
+        toast.error('Ocorreu um erro ao salvar variável');
+      })
+      .finally(() => {
+        router.push('/variaveis');
+      });
+  });
 
-    const router = useRouter();
+  const router = useRouter();
 
-    function voltar(): void {
-        router.push("/variaveis");
-    }
+  function voltar(): void {
+    router.push('/variaveis');
+  }
 
-
-    return (
-        <form onSubmit={onSubmit}>
-            <Flex
-                css={{gap: "$8"}}
-                align={"center"}
-                justify={"end"}
-                wrap={"wrap"}
-            >
-                <Flex direction={"row"} css={{gap: "$6"}} wrap={"wrap"}>
-                    <Button auto color={"secondary"} onPress={voltar}>
-                        Voltar
-                    </Button>
-                    <Button auto type="submit">
-                        Salvar
-                    </Button>
-                </Flex>
+  return (
+    <form onSubmit={onSubmit}>
+        <Flex
+            css={{gap: "$8"}}
+            align={"center"}
+            justify={"end"}
+            wrap={"wrap"}
+        >
+            <Flex direction={"row"} css={{gap: "$6"}} wrap={"wrap"}>
+                <Button auto color={"secondary"} onPress={voltar}>
+                    Voltar
+                </Button>
+                <Button auto type="submit">
+                    Salvar
+                </Button>
             </Flex>
-            <Grid.Container gap={2} justify="center">
-                {formItems.map(({
-                                    cols,
-                                    label,
-                                    property,
-                                    required,
-                                    errorMessage,
-                                    placeholder,
-                                    readOnly
-                                }, index) => {
-                    return (
-                        <Grid key={`form-item-${index}`} xs={cols}>
-                            <Input
-                                label={errors[property]?.message || label}
-                                bordered
-                                readOnly={readOnly}
-                                clearable
-                                fullWidth
-                                color={errors[property]?.message ? 'error' : 'default'}
-                                size="lg"
-                                {...register(property, {required: required ? errorMessage : false})}
-                                placeholder={placeholder}
-                            />
-                        </Grid>
-                    )
-                })}
-            </Grid.Container>
-        </form>
-    );
+        </Flex>
+        <Grid.Container gap={2} justify="center">
+            {formItems.map(({
+                                cols,
+                                label,
+                                property,
+                                required,
+                                errorMessage,
+                                placeholder,
+                                readOnly
+                            }, index) => {
+                return (
+                    <Grid key={`form-item-${index}`} xs={cols}>
+                        <Input
+                            label={errors[property]?.message || label}
+                            bordered
+                            readOnly={readOnly}
+                            clearable
+                            fullWidth
+                            color={errors[property]?.message ? 'error' : 'default'}
+                            size="lg"
+                            {...register(property, {required: required ? errorMessage : false})}
+                            placeholder={placeholder}
+                        />
+                    </Grid>
+                )
+            })}
+        </Grid.Container>
+    </form>
+);
 };
