@@ -4,6 +4,7 @@ import {getBaseUrl} from "../../shared/utils/apiUtil";
 
 type Variable = {
   id: string;
+  code?: string;
   name: string;
   acronym: string;
   unit: string;
