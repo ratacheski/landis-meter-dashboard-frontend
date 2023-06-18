@@ -5,6 +5,7 @@ import {EditIcon} from "../icons/table/edit-icon";
 import {EyeIcon} from "../icons/table/eye-icon";
 import {TableAction} from "./data-table.interface";
 import {IconButton} from "./table.styled";
+import {Location} from "react-iconly"
 
 interface Props {
     item: any;
@@ -30,6 +31,12 @@ const renderButton = (action: TableAction, item: any) => {
             return (
                 <IconButton onClick={() => action.onClick(item)}>
                     <EyeIcon size={25} fill={action.color || "#979797"}/>
+                </IconButton>
+            );
+        case "location":
+            return (
+                <IconButton onClick={() => action.onClick(item)}>
+                    <Location set="bold" primaryColor="blueviolet"/>
                 </IconButton>
             );
         default:
