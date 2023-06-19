@@ -24,6 +24,7 @@ export default function MapModal({ meter, visible, closeHandler }) {
     <div>
       <Modal
         closeButton
+        onClose={() => closeHandler()}
         aria-labelledby="modal-title"
         open={visible}
         width="700px"
