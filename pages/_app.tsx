@@ -3,6 +3,7 @@ import type { AppProps } from "next/app";
 import { createTheme, NextUIProvider } from "@nextui-org/react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { Layout } from "../components/layout/layout";
+import { ToastContainer } from "react-toastify";
 
 const lightTheme = createTheme({
   type: "light",
@@ -29,6 +30,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       }}
     >
       <NextUIProvider>
+        <ToastContainer theme="colored"/>
         <Layout>
           <Component {...pageProps} />
         </Layout>
