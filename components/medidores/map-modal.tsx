@@ -18,9 +18,7 @@ export default function MapModal({ meter, visible, closeHandler }) {
 
   const dragHandler = (e: google.maps.MapMouseEvent) => {
     meter.latitude = e?.latLng?.lat();
-    meter.longitude = e?.latLng?.lng();   
-    console.log(meter);
-     
+    meter.longitude = e?.latLng?.lng();        
   }
   return (
     <div>
