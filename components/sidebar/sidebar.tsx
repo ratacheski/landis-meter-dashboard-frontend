@@ -51,7 +51,7 @@ export const SidebarWrapper = () => {
               isActive={router.pathname === "/"}
               href="/"
             />
-            <SidebarMenu title="Main Menu">
+            <SidebarMenu title="Cadastro">
               <SidebarItem
                 isActive={router.pathname === "/variaveis"}
                 title="Variáveis"
@@ -64,43 +64,28 @@ export const SidebarWrapper = () => {
                 icon={<TimeSquare primaryColor="#969696" />}
                 href="/medidores"
               />
-              <CollapseItems
-                icon={<BalanceIcon />}
-                items={["Banks Accounts", "Credit Cards", "Loans"]}
-                title="Balances"
-              />
 
               <SidebarItem
                 isActive={router.pathname === "/customers"}
-                title="Customers"
+                title="Clientes"
                 icon={<CustomersIcon />}
-              />
-              <SidebarItem
-                isActive={router.pathname === "/products"}
-                title="Products"
-                icon={<ProductsIcon />}
-              />
-              <SidebarItem
-                isActive={router.pathname === "/reports"}
-                title="Reports"
-                icon={<ReportsIcon />}
               />
             </SidebarMenu>
 
-            <SidebarMenu title="General">
+            <SidebarMenu title="Configurações">
+              <SidebarItem
+                isActive={router.pathname === "/reports"}
+                title="Relatórios"
+                icon={<ReportsIcon />}
+              />
               <SidebarItem
                 isActive={router.pathname === "/developers"}
-                title="Developers"
+                title="Consultas"
                 icon={<DevIcon />}
               />
               <SidebarItem
-                isActive={router.pathname === "/view"}
-                title="View Test Data"
-                icon={<ViewIcon />}
-              />
-              <SidebarItem
                 isActive={router.pathname === "/settings"}
-                title="Settings"
+                title="Configurações"
                 icon={<SettingsIcon />}
               />
             </SidebarMenu>

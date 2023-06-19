@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import { getBaseUrl } from "../../shared/utils/apiUtil";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { Variable } from "../../shared/utils/types";
 
 type VariaveisProps = {

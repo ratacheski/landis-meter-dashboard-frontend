@@ -12,6 +12,7 @@ import { DataTable } from "../table/data-table";
 import { getBaseUrl } from "../../shared/utils/apiUtil";
 import MapModal from "./map-modal";
 import { Meter } from "../../shared/utils/types";
+import { toast } from "react-toastify";
 
 type MetersProps = {
   meters: Meter[];
@@ -32,7 +33,7 @@ export const Medidores = ({ meters: variables }: MetersProps) => {
         },
         body: JSON.stringify(itemToShowMap),
       }).then(() => {
-        // exibir snack de latitude alterada com sucesso
+        toast.success("Coordenadas do Medidor atualizadas com sucesso!");
       });
     }
   };
