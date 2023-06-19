@@ -11,17 +11,10 @@ import { useRouter } from "next/router";
 import { DataTable } from "../table/data-table";
 import { getBaseUrl } from "../../shared/utils/apiUtil";
 import MapModal from "./map-modal";
+import { Meter } from "../../shared/utils/types";
 
 type MetersProps = {
   meters: Meter[];
-};
-type Meter = {
-  id?: string;
-  name?: string;
-  acronym?: string;
-  unit?: string;
-  latitude?: string;
-  longitude?: string;
 };
 
 export const Medidores = ({ meters: variables }: MetersProps) => {

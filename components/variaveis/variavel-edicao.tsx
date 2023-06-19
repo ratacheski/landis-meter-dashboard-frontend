@@ -6,17 +6,11 @@ import {Text} from "@nextui-org/react";
 import {PaymentsIcon} from "../icons/sidebar/payments-icon";
 import {Flex} from "../styles/flex";
 import {FormVariable} from "./form-variable";
+import { Variable } from "../../shared/utils/types";
 
 
 type VariaveisProps = {
     variable: Variable;
-};
-type Variable = {
-    id?: string;
-    code?: string;
-    name?: string;
-    acronym?: string;
-    unit?: string;
 };
 
 export const VariavelEdicao = ({variable}: VariaveisProps) => {

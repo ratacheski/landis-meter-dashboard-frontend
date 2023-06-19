@@ -6,16 +6,10 @@ import { useRouter } from "next/router";
 import { getBaseUrl } from "../../shared/utils/apiUtil";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Variable } from "../../shared/utils/types";
 
 type VariaveisProps = {
   variable: Variable;
-};
-type Variable = {
-  id?: string;
-  code?: string;
-  name?: string;
-  acronym?: string;
-  unit?: string;
 };
 
 type FormItems = {

@@ -11,16 +11,10 @@ import { useRouter } from "next/router";
 import { DataTable } from "../table/data-table";
 import { getBaseUrl } from "../../shared/utils/apiUtil";
 import { toast } from "react-toastify";
+import { Variable } from "../../shared/utils/types";
 
 type VariaveisProps = {
   variables: Variable[];
-};
-type Variable = {
-  id?: string;
-  code?: string;
-  name?: string;
-  acronym?: string;
-  unit?: string;
 };
 
 export const Variaveis = ({ variables }: VariaveisProps) => {
