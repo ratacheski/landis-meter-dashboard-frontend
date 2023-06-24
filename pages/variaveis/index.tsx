@@ -1,14 +1,7 @@
 import type { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { Variaveis } from '../../components/variaveis'
 import {getBaseUrl} from "../../shared/utils/apiUtil";
-
-type Variable = {
-  id: string;
-  code?: string;
-  name: string;
-  acronym: string;
-  unit: string;
-};
+import { Variable } from '../../shared/utils/types';
 
 export default function variaveis({
   variables,

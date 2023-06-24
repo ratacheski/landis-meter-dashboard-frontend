@@ -11,20 +11,14 @@ import { useRouter } from "next/router";
 import { DataTable } from "../table/data-table";
 import { getBaseUrl } from "../../shared/utils/apiUtil";
 import MapModal from "./map-modal";
+import { Meter } from "../../shared/utils/types";
+import { ToastContainer, toast } from 'react-toastify';
 
-type MetersProps = {
+type MedidoresProps = {
   meters: Meter[];
 };
-type Meter = {
-  id?: string;
-  name?: string;
-  acronym?: string;
-  unit?: string;
-  latitude?: string;
-  longitude?: string;
-};
 
-export const Medidores = ({ meters: variables }: MetersProps) => {
+export const Medidores = ({ meters }: MedidoresProps) => {
   const router = useRouter();
   const [mapVisible, setMapVisible] = React.useState(false);
   const [itemToShowMap, setItemToShowMap] = React.useState<Meter>({});
@@ -49,7 +43,7 @@ export const Medidores = ({ meters: variables }: MetersProps) => {
   const columns: TableColumn[] = [
     { name: "Nome", uid: "name" },
     { name: "Sigla", uid: "acronym" },
-    { name: "Unidade", uid: "unit" },
+    //{ name: "Unidade", uid: "unit" },
     { name: "Actions", uid: "actions", hideHeader: true },
   ];
 
@@ -82,9 +76,19 @@ export const Medidores = ({ meters: variables }: MetersProps) => {
       const url = `${getBaseUrl()}/meter/${itemToDelete.id}`;
       fetch(url, {
         method: "DELETE",
-      }).then(() => {
-        router.push("/medidores");
-      });
+      })
+        .then(async (response) => {
+          if (response.ok) {
+            toast.success("Medidor removido com sucesso");
+            router.push("/medidores");
+          } else {
+            const res = await response.json();
+            toast.error(res.message);
+          }
+        })
+        .finally(() => {
+          router.push("/medidores");
+        });
     }
     setItemToDelete({});
     setDeleteVisible(false);
@@ -161,7 +165,7 @@ export const Medidores = ({ meters: variables }: MetersProps) => {
       <DataTable
         ariaLabel="Tabela de Medidores"
         columns={columns}
-        data={variables}
+        data={meters}
         actions={actions}
       />
       <MapModal visible={mapVisible} closeHandler={closeMapModalHandler} meter={itemToShowMap}/>

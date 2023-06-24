@@ -5,15 +5,15 @@ import Link from "next/link";
 import {Text} from "@nextui-org/react";
 import {PaymentsIcon} from "../icons/sidebar/payments-icon";
 import {Flex} from "../styles/flex";
-import {FormVariable} from "./form-variable";
-import { Variable } from "../../shared/utils/types";
+import { FormMeter } from "./form-medidor"
+import { Meter } from "../../shared/utils/types";
 
 
-type VariaveisProps = {
-    variable: Variable;
+type MedidoresProps = {
+    meter: Meter;
 };
 
-export const VariavelEdicao = ({variable}: VariaveisProps) => {
+export const MedidorEdicao = ({meter}: MedidoresProps) => {
 
     return (
         <Flex
@@ -39,8 +39,8 @@ export const VariavelEdicao = ({variable}: VariaveisProps) => {
 
                 <Crumb>
                     <PaymentsIcon/>
-                    <Link href={"/variaveis"}>
-                        <CrumbLink href="#">Variáveis</CrumbLink>
+                    <Link href={"/medidores"}>
+                        <CrumbLink href="#">Medidores</CrumbLink>
                     </Link>
                     <Text>/</Text>
                 </Crumb>
@@ -48,11 +48,11 @@ export const VariavelEdicao = ({variable}: VariaveisProps) => {
 
                 <Crumb>
                     <Link href={"/"}>
-                        <CrumbLink href="#">{variable.id ? 'Edição de Variável' : 'Nova Variável'}</CrumbLink>
+                        <CrumbLink href="#">{meter.id ? 'Edição de Medidor' : 'Novo Medidor'}</CrumbLink>
                     </Link>
                 </Crumb>
             </Breadcrumbs>
-            <FormVariable variable={variable}/>
+            <FormMeter meter={meter}/>
         </Flex>
     );
 };

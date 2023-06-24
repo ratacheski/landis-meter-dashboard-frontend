@@ -5,22 +5,16 @@ import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/router';
 import { getBaseUrl } from '../../shared/utils/apiUtil';
 import { ToastContainer, toast } from 'react-toastify';
+import { Meter } from "../../shared/utils/types";
 import 'react-toastify/dist/ReactToastify.css';
 
-type MetersProps = {
-  meter: meter;
-};
-type meter = {
-  name?: string;
-  acronym?: string;
-  unit?: string;
-  latitude?: number;
-  longitude?: number;
+type MedidoresProps = {
+  meter: Meter;
 };
 
 
 type FormItems = {
-  property: 'name' | 'acronym' | 'unit' | 'latitude' | 'longitude';
+  property: 'name' | 'acronym' | 'latitude' | 'longitude';
   errorMessage?: string;
   label: string;
   placeholder: string;
@@ -29,7 +23,7 @@ type FormItems = {
   readOnly?: boolean;
 };
 
-export const MeterForm = ({ meter }: MetersProps) => {
+export const FormMeter = ({ meter }: MedidoresProps) => {
   const formItems: FormItems[] = [
         {
             property: "name",
@@ -49,14 +43,6 @@ export const MeterForm = ({ meter }: MetersProps) => {
             required: true
         },
         {
-            property: "unit",
-            label: "Unidade",
-            placeholder: "Unidade",
-            cols: 6,
-            errorMessage: 'Unidade de Medida é obrigatória',
-            required: true
-        },
-        {
             property: "latitude",
             label: "Latitude",
             placeholder: "Latitude",
@@ -73,39 +59,58 @@ export const MeterForm = ({ meter }: MetersProps) => {
             required: true
         }
     ]
-    const {handleSubmit, register, formState: {errors}} = useForm<meter>({
+    const {handleSubmit, register, formState: {errors}} = useForm<Meter>({
         defaultValues: {
             ...meter
         }
   });
 
-  const onSubmit = handleSubmit((data: meter) => {
-    const url = `${getBaseUrl()}/novo${meter.name ? `/${meter.name}` : ''}`;
-    const method = meter.name ? 'PUT' : 'POST';
-
-    fetch(url, {
-      method: method,
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8'
-      },
-      body: JSON.stringify(data)
-    })
-      .then((response) => {
-        if (response.ok) {
-            toast.success('Medidor registrado com sucesso');
-        } else {
-            toast.error('Ocorreu um erro ao salvar Medidor');
-        }
-      })
-      .catch(() => {
-        toast.error('Ocorreu um erro ao salvar Medidor');
-      })
-      .finally(() => {
-        router.push('/medidores/');
-      });
+const onSubmit = handleSubmit(async (data: Meter) => {
+        const url = `${getBaseUrl()}/meter${
+            meter.id ? `/${meter.id}` : ""
+        }`;
+        const method = meter.id ? "PUT" : "POST";
+//    fetch(url, {
+//      method: method,
+//      headers: {
+//        'Accept': 'application/json',
+//        'Content-Type': 'application/json;charset=UTF-8'
+//      },
+//      body: JSON.stringify(data)
+//    })
+//      .then((response) => {
+//        if (response.ok) {
+//            toast.success('Medidor registrado com sucesso');
+//        } else {
+//            toast.error('Ocorreu um erro ao salvar Medidor');
+//        }
+//      })
+//      .catch(() => {
+//        toast.error('Ocorreu um erro ao salvar Medidor');
+//      })
+//      .finally(() => {
+//        router.push('/medidores/');
+//      });
+//  });
+//
+const response = await fetch(url, {
+    method: method,
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json;charset=UTF-8",
+    },
+    body: JSON.stringify(data),
   });
 
+  if (response.ok) {
+    toast.success("Medidor registrado com sucesso");
+    router.push("/medidores");
+  } else {
+    toast.error('Ocorreu um erro ao salvar Medidor');
+    const res = await response.json();
+    toast.error(res.message);
+  }
+});
   const router = useRouter();
 
   function voltar(): void {
