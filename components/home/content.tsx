@@ -25,7 +25,7 @@ export const Content = ({ variables, meters }: ContentProps) => {
       return {
         name: meas.variableName,
         data: meas.measurements?.map((m) => ({
-          x: new Date(m.instant * 1000),
+          x: new Date(m.instant),
           y: parseFloat(m.value).toFixed(3),
         }))
       }
