@@ -3,8 +3,7 @@ import { Medidores } from '../../components/medidores'
 import {getBaseUrl} from "../../shared/utils/apiUtil";
 import { Meter } from "../../shared/utils/types";
 
-
-export default function meters({
+export default function medidores({
   meters,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
 
