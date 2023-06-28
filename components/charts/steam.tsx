@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box } from "../styles/box";
+import { Box } from "@/components/styles/box";
 import Chart, { Props } from "react-apexcharts";
 import { Loading, Text } from "@nextui-org/react";
 

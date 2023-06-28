@@ -1,17 +1,17 @@
 import { Button, Modal, Text } from "@nextui-org/react";
 import Link from "next/link";
 import React from "react";
-import { Breadcrumbs, Crumb, CrumbLink } from "../breadcrumb/breadcrumb.styled";
-import { ExportIcon } from "../icons/accounts/export-icon";
-import { HouseIcon } from "../icons/breadcrumb/house-icon";
-import { PaymentsIcon } from "../icons/sidebar/payments-icon";
-import { Flex } from "../styles/flex";
-import { TableAction, TableColumn } from "../table/data-table.interface";
+import { Breadcrumbs, Crumb, CrumbLink } from "@/components/breadcrumb/breadcrumb.styled";
+import { ExportIcon } from "@/components/icons/accounts/export-icon";
+import { HouseIcon } from "@/components/icons/breadcrumb/house-icon";
+import { PaymentsIcon } from "@/components/icons/sidebar/payments-icon";
+import { Flex } from "@/components/styles/flex";
+import { TableAction, TableColumn } from "@/components/table/data-table.interface";
 import { useRouter } from "next/router";
-import { DataTable } from "../table/data-table";
-import { getBaseUrl } from "../../shared/utils/apiUtil";
+import { DataTable } from "@/components/table/data-table";
+import { getBaseUrl } from "@/shared/utils/apiUtil";
 import MapModal from "./map-modal";
-import { Meter } from "../../shared/utils/types";
+import { Meter } from "@/shared/utils/types";
 import { toast } from "react-toastify";
 
 type MedidoresProps = {

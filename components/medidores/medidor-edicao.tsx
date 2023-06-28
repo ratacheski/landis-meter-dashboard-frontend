@@ -1,12 +1,12 @@
 import React from "react";
-import {Breadcrumbs, Crumb, CrumbLink} from "../breadcrumb/breadcrumb.styled";
-import {HouseIcon} from "../icons/breadcrumb/house-icon";
+import {Breadcrumbs, Crumb, CrumbLink} from "@/components/breadcrumb/breadcrumb.styled";
+import {HouseIcon} from "@/components/icons/breadcrumb/house-icon";
 import Link from "next/link";
 import {Text} from "@nextui-org/react";
-import {PaymentsIcon} from "../icons/sidebar/payments-icon";
-import {Flex} from "../styles/flex";
+import {PaymentsIcon} from "@/components/icons/sidebar/payments-icon";
+import {Flex} from "@/components/styles/flex";
 import { FormMeter } from "./form-medidor"
-import { Meter } from "../../shared/utils/types";
+import { Meter } from "@/shared/utils/types";
 
 
 type MedidoresProps = {

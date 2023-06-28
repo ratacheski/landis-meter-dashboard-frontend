@@ -1,7 +1,7 @@
 import type { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import { Variaveis } from '../../components/variaveis'
-import {getBaseUrl} from "../../shared/utils/apiUtil";
-import { Variable } from '../../shared/utils/types';
+import { Variaveis } from '@/components/variaveis'
+import {getBaseUrl} from "@/shared/utils/apiUtil";
+import { Variable } from '@/shared/utils/types';
 
 export default function variaveis({
   variables,

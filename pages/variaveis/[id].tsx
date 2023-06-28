@@ -1,8 +1,8 @@
 import React from 'react'
 import {GetServerSideProps, InferGetServerSidePropsType} from "next";
-import {VariavelEdicao} from "../../components/variaveis/variavel-edicao";
-import {getBaseUrl} from "../../shared/utils/apiUtil";
-import { Variable } from '../../shared/utils/types';
+import {VariavelEdicao} from "@/components/variaveis/variavel-edicao";
+import {getBaseUrl} from "@/shared/utils/apiUtil";
+import { Variable } from '@/shared/utils/types';
 
 export default function variavelForm({variable}: InferGetServerSidePropsType<typeof getServerSideProps>) {
     return (

@@ -1,7 +1,7 @@
 import {Collapse, Text} from '@nextui-org/react';
 import React, {useState} from 'react';
-import {ChevronUpIcon} from '../icons/sidebar/chevron-up-icon';
-import {Flex} from '../styles/flex';
+import {ChevronUpIcon} from '@/components/icons/sidebar/chevron-up-icon';
+import {Flex} from '@/components/styles/flex';
 
 interface Props {
    icon: React.ReactNode;

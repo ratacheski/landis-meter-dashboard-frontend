@@ -1,6 +1,6 @@
 import {Table} from "@nextui-org/react";
 import React from "react";
-import {Box} from "../styles/box";
+import {Box} from "@/components/styles/box";
 import {RenderCell} from "./render-cell";
 import {TableAction, TableColumn} from "./data-table.interface";
 

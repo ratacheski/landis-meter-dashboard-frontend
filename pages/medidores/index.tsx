@@ -1,7 +1,7 @@
 import type { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import { Medidores } from '../../components/medidores'
-import {getBaseUrl} from "../../shared/utils/apiUtil";
-import { Meter } from "../../shared/utils/types";
+import { Medidores } from '@/components/medidores'
+import {getBaseUrl} from "@/shared/utils/apiUtil";
+import { Meter } from "@/shared/utils/types";
 
 export default function medidores({
   meters,

@@ -1,11 +1,11 @@
 import {Input, Link, Navbar, Text} from '@nextui-org/react';
 import React from 'react';
-import {FeedbackIcon} from '../icons/navbar/feedback-icon';
-import {GithubIcon} from '../icons/navbar/github-icon';
-import {SupportIcon} from '../icons/navbar/support-icon';
-import {SearchIcon} from '../icons/searchicon';
-import {Box} from '../styles/box';
-import {Flex} from '../styles/flex';
+import {FeedbackIcon} from '@/components/icons/navbar/feedback-icon';
+import {GithubIcon} from '@/components/icons/navbar/github-icon';
+import {SupportIcon} from '@/components/icons/navbar/support-icon';
+import {SearchIcon} from '@/components/icons/searchicon';
+import {Box} from '@/components/styles/box';
+import {Flex} from '@/components/styles/flex';
 import {BurguerButton} from './burguer-button';
 import {NotificationsDropdown} from './notifications-dropdown';
 import {UserDropdown} from './user-dropdown';
@@ -107,14 +107,6 @@ export const NavbarWrapper = ({children}: Props) => {
 
                <Navbar.Content hideIn={'md'}>
                   <SupportIcon />
-               </Navbar.Content>
-               <Navbar.Content>
-                  <Link
-                     href="https://github.com/"
-                     target={'_blank'}
-                  >
-                     <GithubIcon />
-                  </Link>
                </Navbar.Content>
                <Navbar.Content>
                   <UserDropdown />

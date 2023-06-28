@@ -1,6 +1,6 @@
 import {CSS} from '@nextui-org/react';
 import React from 'react';
-import {Svg} from '../../styles/svg';
+import {Svg} from '@/components/styles/svg';
 
 interface Props extends React.SVGAttributes<SVGElement> {
    css?: CSS;

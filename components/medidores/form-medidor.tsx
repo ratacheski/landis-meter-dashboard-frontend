@@ -1,11 +1,11 @@
 import { Button, Grid, Input } from '@nextui-org/react';
 import React, { useState } from 'react';
-import { Flex } from '../styles/flex';
+import { Flex } from '@/components/styles/flex';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/router';
-import { getBaseUrl } from '../../shared/utils/apiUtil';
+import { getBaseUrl } from '@/shared/utils/apiUtil';
 import { ToastContainer, toast } from 'react-toastify';
-import { Meter } from "../../shared/utils/types";
+import { Meter } from "@/shared/utils/types";
 import 'react-toastify/dist/ReactToastify.css';
 
 type MedidoresProps = {

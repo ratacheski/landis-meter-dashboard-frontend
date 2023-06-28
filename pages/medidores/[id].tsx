@@ -1,9 +1,9 @@
 import React from 'react'
 import {GetServerSideProps, InferGetServerSidePropsType} from "next";
-import {MedidorEdicao} from "../../components/medidores/medidor-edicao";
+import {MedidorEdicao} from "@/components/medidores/medidor-edicao";
 import { ToastContainer, toast } from 'react-toastify';
-import {getBaseUrl} from "../../shared/utils/apiUtil";
-import { Meter  } from '../../shared/utils/types';
+import {getBaseUrl} from "@/shared/utils/apiUtil";
+import { Meter  } from '@/shared/utils/types';
 
 export default function medidorForm({
   meter,

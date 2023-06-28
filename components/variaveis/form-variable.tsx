@@ -1,11 +1,11 @@
 import { Button, Grid, Input } from "@nextui-org/react";
 import React from "react";
-import { Flex } from "../styles/flex";
+import { Flex } from "@/components/styles/flex";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
-import { getBaseUrl } from "../../shared/utils/apiUtil";
+import { getBaseUrl } from "@/shared/utils/apiUtil";
 import { toast } from "react-toastify";
-import { Variable } from "../../shared/utils/types";
+import { Variable } from "@/shared/utils/types";
 
 type VariaveisProps = {
   variable: Variable;

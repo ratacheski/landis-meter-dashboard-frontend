@@ -1,37 +1,11 @@
+import { Box } from "@/components/styles/box";
+import { Flex } from "@/components/styles/flex";
 import { Text } from "@nextui-org/react";
-import dynamic from "next/dynamic";
-import React from "react";
-import { Measurements, Meter, Variable } from "../../shared/utils/types";
-import { Box } from "../styles/box";
-import { Flex } from "../styles/flex";
-import { DashFilter } from "./dash-filter";
-import { Props } from "react-apexcharts";
 
-const Chart = dynamic(
-  () => import("../charts/steam").then((mod) => mod.Steam),
-  {
-    ssr: false,
-  }
-);
 type ContentProps = {
-  variables: Variable[];
-  meters: Meter[];
 };
 
-export const Content = ({ variables, meters }: ContentProps) => {
-  const [measurements, setMeasurements] = React.useState<Props["series"]>([]);
-  function handleMeasurements(measurements: Measurements[]) {
-    const measures = measurements.map(meas => {
-      return {
-        name: meas.variableName,
-        data: meas.measurements?.map((m) => ({
-          x: new Date(m.instant),
-          y: parseFloat(m.value).toFixed(3),
-        }))
-      }
-    })
-    setMeasurements(measures);
-  }
+export const Content = ({}: ContentProps) => {
   return (
     <Box css={{ overflow: "hidden", height: "100%" }}>
       <Flex
@@ -60,39 +34,7 @@ export const Content = ({ variables, meters }: ContentProps) => {
           }}
           direction={"column"}
         >
-          {/* Card Section Top */}
-          <DashFilter
-            meters={meters}
-            variables={variables}
-            handleMeasurements={handleMeasurements}
-          />
-
-          {/* Chart */}
-          <Box>
-            <Text
-              h3
-              css={{
-                textAlign: "center",
-                "@lg": {
-                  textAlign: "inherit",
-                },
-              }}
-            >
-              Medições
-            </Text>
-            <Box
-              css={{
-                width: "100%",
-                backgroundColor: "$accents0",
-                boxShadow: "$lg",
-                borderRadius: "$2xl",
-                px: "$10",
-                py: "$10",
-              }}
-            >
-              <Chart series={measurements} />
-            </Box>
-          </Box>
+          <Text h3>Home</Text>
         </Flex>
       </Flex>
     </Box>
