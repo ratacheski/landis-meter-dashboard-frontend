@@ -51,6 +51,14 @@ export const SidebarWrapper = () => {
               isActive={router.pathname === "/"}
               href="/"
             />
+            <SidebarMenu title="Dashboards">
+              <SidebarItem
+                isActive={router.pathname === "/dashboards/analise-medidor"}
+                title="Análise de Medidor"
+                icon={<BalanceIcon />}
+                href="/dashboards/analise-medidor"
+              />
+            </SidebarMenu>
             <SidebarMenu title="Cadastro">
               <SidebarItem
                 isActive={router.pathname === "/variaveis"}

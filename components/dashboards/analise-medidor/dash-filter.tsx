@@ -2,10 +2,10 @@ import { Button, Dropdown, Input, Loading, Text } from "@nextui-org/react";
 import React from "react";
 import { Search } from "react-iconly";
 import { toast } from "react-toastify";
-import { getBaseUrl } from "../../shared/utils/apiUtil";
-import { Meter, Variable } from "../../shared/utils/types";
-import { Box } from "../styles/box";
-import { Flex } from "../styles/flex";
+import { getBaseUrl } from "@/shared/utils/apiUtil";
+import { Meter, Variable } from "@/shared/utils/types";
+import { Box } from "@/components/styles/box";
+import { Flex } from "@/components/styles/flex";
 
 type Props = {
   variables: Variable[];
