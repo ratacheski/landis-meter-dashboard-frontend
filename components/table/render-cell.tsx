@@ -44,7 +44,7 @@ const renderButton = (action: TableAction, item: any) => {
                 <Button            // @ts-ignore
                     color={action.color || "primary"}
                     auto
-                    onClick={() => action.onClick(item)}
+                    onPress={() => action.onClick(item)}
                 >
                     {action.name}
                 </Button>

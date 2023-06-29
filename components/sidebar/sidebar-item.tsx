@@ -28,7 +28,7 @@ export const SidebarItem = ({icon, title, isActive, href = ''}: Props) => {
             }}
          >
             <Flex
-               onClick={handleClick}
+               onPress={handleClick}
                css={{
                   'gap': '$6',
                   'width': '100%',

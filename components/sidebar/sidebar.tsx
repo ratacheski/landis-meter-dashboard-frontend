@@ -37,7 +37,7 @@ export const SidebarWrapper = () => {
         top: "0",
       }}
     >
-      {collapsed ? <Sidebar.Overlay onClick={setCollapsed} /> : null}
+      {collapsed ? <Sidebar.Overlay onPress={setCollapsed} /> : null}
 
       <Sidebar collapsed={collapsed}>
         <Sidebar.Header>

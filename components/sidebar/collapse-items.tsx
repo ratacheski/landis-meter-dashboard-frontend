@@ -41,7 +41,7 @@ export const CollapseItems = ({icon, items, title}: Props) => {
                      },
                   }}
                   justify={'between'}
-                  onClick={handleToggle}
+                  onPress={handleToggle}
                >
                   <Flex css={{gap: '$6'}}>
                      {icon}

@@ -10,8 +10,10 @@ export type Meter = {
   id?: string;
   name?: string;
   acronym?: string;
-  latitude?: string;
-  longitude?: string;
+  latitude: number;
+  longitude: number;
+  active?: boolean;
+  lastSincronization ?: Date;
 };
 
 export type Measurements = {

@@ -108,7 +108,7 @@ export const Variaveis = ({ variables }: VariaveisProps) => {
           <Button auto iconRight={<ExportIcon />} color={"secondary"}>
             Exportar
           </Button>
-          <Button auto onClick={novo}>
+          <Button auto onPress={novo}>
             Nova Variável +
           </Button>
         </Flex>

@@ -1,7 +1,6 @@
-import React, { useState } from "react";
 import { Box } from "@/components/styles/box";
+import { Text } from "@nextui-org/react";
 import Chart, { Props } from "react-apexcharts";
-import { Loading, Text } from "@nextui-org/react";
 
 type ChartProps = {
   series: Props["series"];

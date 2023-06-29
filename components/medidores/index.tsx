@@ -127,7 +127,7 @@ export const Medidores = ({ meters }: MedidoresProps) => {
           <Button auto iconRight={<ExportIcon />} color={"secondary"}>
             Exportar
           </Button>
-          <Button auto onClick={novo}>
+          <Button auto onPress={novo}>
             Novo Medidor +
           </Button>
         </Flex>

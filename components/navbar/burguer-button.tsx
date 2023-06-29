@@ -6,7 +6,7 @@ export const BurguerButton = () => {
    const {collapsed, setCollapsed} = useSidebarContext();
 
    return (
-      <StyledBurgerButton open={collapsed} onClick={setCollapsed}>
+      <StyledBurgerButton open={collapsed} onPress={setCollapsed}>
          <div />
          <div />
       </StyledBurgerButton>
