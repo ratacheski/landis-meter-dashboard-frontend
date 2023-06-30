@@ -7,13 +7,14 @@ export type Variable = {
 };
 
 export type Meter = {
+  showInfoWindow: boolean;
   id?: string;
   name?: string;
   acronym?: string;
   latitude: number;
   longitude: number;
   active?: boolean;
-  lastSincronization ?: Date;
+  lastSincronization?: Date;
 };
 
 export type Measurements = {

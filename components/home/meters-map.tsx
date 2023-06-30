@@ -1,7 +1,12 @@
 import { getBaseUrl } from "@/shared/utils/apiUtil";
 import { Meter } from "@/shared/utils/types";
 import { Card, Loading, Text, Image } from "@nextui-org/react";
-import { GoogleMap, LoadScriptNext, MarkerF } from "@react-google-maps/api";
+import {
+  GoogleMap,
+  InfoWindowF,
+  LoadScriptNext,
+  MarkerF,
+} from "@react-google-maps/api";
 import React from "react";
 import { Flex } from "../styles/flex";
 
@@ -37,6 +42,20 @@ export const MetersMap = () => {
       bounds.extend(location);
     }
     mapInstance.fitBounds(bounds);
+  }
+
+  function handleMarkerHover(
+    meter: Meter,
+    resetExibitions: boolean = false
+  ): void {
+    meters.forEach((m) => {
+      if (m.id === meter.id) {
+        m.showInfoWindow = resetExibitions ? false : true;
+      } else {
+        m.showInfoWindow = false;
+      }
+    });
+    setMeters([...meters]);
   }
 
   return (
@@ -78,7 +97,30 @@ export const MetersMap = () => {
                           }
                     }
                     position={{ lat: meter.latitude, lng: meter.longitude }}
-                  />
+                    title={meter.name}
+                    onMouseOver={() => handleMarkerHover(meter)}
+                  >
+                    {meter.showInfoWindow ? (
+                      <InfoWindowF
+                        position={{ lat: meter.latitude, lng: meter.longitude }}
+                        onCloseClick={() => handleMarkerHover(meter, true)}
+                      >
+                        <>
+                          <Text h4 color="primary">
+                            Medidor: {meter.name}
+                          </Text>
+                          <Text h6 color="primary">
+                            Sigla: {meter.acronym}
+                          </Text>
+                          {meter.lastSincronization && (
+                            <Text color="#16181A">
+                              {'Última Medição: ' + new Date(meter.lastSincronization).toLocaleString()}
+                            </Text>
+                          )}
+                        </>
+                      </InfoWindowF>
+                    ) : null}
+                  </MarkerF>
                 );
               })}
             </GoogleMap>
