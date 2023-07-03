@@ -5,18 +5,23 @@ import { InactivityRanking } from "./inactivity-ranking";
 import { MetersMap } from "./meters-map";
 import { getBaseUrl } from "@/shared/utils/apiUtil";
 import { useEffect, useState } from "react";
-import { BigNumberCard } from '@/components/home/big-number-card.tsx'
+import { BigNumberCard } from "@/components/home/big-number-card.tsx";
+import { CardBalance1 } from "./card-balance1";
+import { CardBalance2 } from "./card-balance2";
+import { CardBalance3 } from "./card-balance3";
 type ContentProps = {};
 
 export const Content = ({}: ContentProps) => {
   const [meterCount, setMeterCount] = useState<number | null>(null);
-  const [inactiveMeterCount, setInactiveMeterCount] = useState<number | null>(null);
+  const [inactiveMeterCount, setInactiveMeterCount] = useState<number | null>(
+    null
+  );
   const [activeMeterCount, setActiveMeterCount] = useState<number | null>(null);
   useEffect(() => {
     const fetchMeterCount = async () => {
       try {
-        const url = `${getBaseUrl()}/meter/count`
-        const response = await fetch(url); 
+        const url = `${getBaseUrl()}/meter/count`;
+        const response = await fetch(url);
         if (response.ok) {
           const count = await response.json();
           setMeterCount(count);
@@ -62,23 +67,6 @@ export const Content = ({}: ContentProps) => {
     fetchMeterCount();
     fetchInactiveMeterCount();
   }, []);
-
-  const MockItem = ({ text, height="$40", cardNumber}:{text:string, height: string, cardNumber: string}) => {
-    return (
-      <Card css={{ h: height}}>
-        <Card.Body>
-          <Text h4 css={{ textAlign: "center", width: "100%" }}>
-            {text}
-          </Text>
-        </Card.Body>
-        {cardNumber !== null && (
-            <Text h2 css={{ textAlign: "center", width: "100%" }}>
-              {cardNumber}
-            </Text>
-        )}
-      </Card>
-    );
-  };
   return (
     <Box css={{ overflow: "hidden", height: "100%" }}>
       <Flex
@@ -109,19 +97,31 @@ export const Content = ({}: ContentProps) => {
         >
           <Grid.Container gap={2} justify="center">
             <Grid lg={4} md={12}>
-              <BigNumberCard text="Quantidade De Medidores" cardNumber ={meterCount} />
+              <BigNumberCard
+                text="Quantidade De Medidores"
+                cardNumber={meterCount}
+                color="$blue500"
+              />
             </Grid>
             <Grid lg={4} md={12}>
-              <BigNumberCard text="Quantidade de Medidores Ativos" cardNumber = {activeMeterCount} />
+              <BigNumberCard
+                text="Quantidade de Medidores Ativos"
+                cardNumber={activeMeterCount}
+                color="$green500"
+              />
             </Grid>
             <Grid lg={4} md={12}>
-              <BigNumberCard text="Quantidade de Medidores Inativos" cardNumber = {inactiveMeterCount} />
+              <BigNumberCard
+                text="Quantidade de Medidores Inativos"
+                cardNumber={inactiveMeterCount}
+                color="$red500"
+              />
             </Grid>
             <Grid lg={8} md={12}>
               <MetersMap />
             </Grid>
             <Grid lg={4} md={12}>
-              <InactivityRanking/>
+              <InactivityRanking />
             </Grid>
           </Grid.Container>
         </Flex>
