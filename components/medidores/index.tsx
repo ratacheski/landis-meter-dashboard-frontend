@@ -1,12 +1,19 @@
 import { Button, Modal, Text } from "@nextui-org/react";
 import Link from "next/link";
 import React from "react";
-import { Breadcrumbs, Crumb, CrumbLink } from "@/components/breadcrumb/breadcrumb.styled";
+import {
+  Breadcrumbs,
+  Crumb,
+  CrumbLink,
+} from "@/components/breadcrumb/breadcrumb.styled";
 import { ExportIcon } from "@/components/icons/accounts/export-icon";
 import { HouseIcon } from "@/components/icons/breadcrumb/house-icon";
 import { PaymentsIcon } from "@/components/icons/sidebar/payments-icon";
 import { Flex } from "@/components/styles/flex";
-import { TableAction, TableColumn } from "@/components/table/data-table.interface";
+import {
+  TableAction,
+  TableColumn,
+} from "@/components/table/data-table.interface";
 import { useRouter } from "next/router";
 import { DataTable } from "@/components/table/data-table";
 import { getBaseUrl } from "@/shared/utils/apiUtil";
@@ -47,7 +54,12 @@ export const Medidores = ({ meters }: MedidoresProps) => {
   ];
 
   const actions: TableAction[] = [
-    {icon: "location", onClick: (item) => verLocalizacao(item)},
+    {
+      icon: "export",
+      tooltip: "Copiar Token",
+      onClick: (item) => copyToken(item),
+    },
+    { icon: "location", onClick: (item) => verLocalizacao(item) },
     { icon: "edit", onClick: (item) => editar(item) },
     { icon: "delete", onClick: (item) => showDelete(item) },
   ];
@@ -68,6 +80,27 @@ export const Medidores = ({ meters }: MedidoresProps) => {
   function showDelete(item: any): void {
     setItemToDelete(item);
     setDeleteVisible(true);
+  }
+
+  async function copyToken(item: any) {
+    const url = `${getBaseUrl()}/meter/${item.id}/token`;
+    const response = await fetch(url);
+    if (response.ok) {
+      const token = await response.json();
+      console.log(token);      
+      navigator.clipboard
+        .writeText(token)
+        .then(() => {
+          toast.success("Token copiado para área de Transferência");
+        })
+        .catch((error) => {
+          console.error("Falha ao copiar token:", error);
+          toast.error("Falha ao copiar token para área de Transferência");
+        });
+    } else {
+      console.error("Error fetching token:", response.statusText);
+      toast.error("Falha ao obter token do medidor");
+    }
   }
 
   const closeDeleteHandler = (confirm: boolean) => {
@@ -167,7 +200,11 @@ export const Medidores = ({ meters }: MedidoresProps) => {
         data={meters}
         actions={actions}
       />
-      <MapModal visible={mapVisible} closeHandler={closeMapModalHandler} meter={itemToShowMap}/>
+      <MapModal
+        visible={mapVisible}
+        closeHandler={closeMapModalHandler}
+        meter={itemToShowMap}
+      />
     </Flex>
   );
 };

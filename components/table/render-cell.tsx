@@ -6,6 +6,7 @@ import {EyeIcon} from "@/components/icons/table/eye-icon";
 import {TableAction} from "./data-table.interface";
 import {IconButton} from "./table.styled";
 import {Location} from "react-iconly"
+import { ExportIcon } from "../icons/accounts/export-icon";
 
 interface Props {
     item: any;
@@ -39,6 +40,12 @@ const renderButton = (action: TableAction, item: any) => {
                     <Location set="bold" primaryColor="blueviolet"/>
                 </IconButton>
             );
+        case "export":
+                return (
+                    <IconButton onClick={() => action.onClick(item)}>
+                        <ExportIcon size={25} fill={action.color || "#979797"}/>
+                    </IconButton>
+                );
         default:
             return (
                 <Button            // @ts-ignore

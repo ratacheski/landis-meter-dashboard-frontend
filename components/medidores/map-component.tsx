@@ -19,9 +19,6 @@ export default function MapComponent({ meter, onDragHandler}) {
 
   return (
     <div>
-        <Text id="modal-title" size={18}>
-        {meter.name}
-        </Text>
         <LoadScriptNext googleMapsApiKey="AIzaSyDhpvUeNosfYN8CKWoqWCFgEESp2oBkdRM">
         <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={10}>
             <MarkerF position={center} draggable onDragEnd={(e) => onDragHandler(e)} />
