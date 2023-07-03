@@ -19,7 +19,9 @@ export const MetersMap = () => {
       const response = await fetch(url);
       const data = await response.json();
       setMeters(data);
-      setLoading(false);
+      setTimeout(() => {
+        setLoading(false);
+      }, 300);
     };
     fetchMeters();
   }, []);

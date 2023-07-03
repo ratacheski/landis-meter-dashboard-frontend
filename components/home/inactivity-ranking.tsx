@@ -19,7 +19,9 @@ export const InactivityRanking = () => {
       const response = await fetch(url);
       const data = await response.json();
       setMeters(data);
-      setLoading(false);
+      setTimeout(() => {
+        setLoading(false);
+      }, 500);
     };
     fetchMeters();
   }, []);
@@ -36,7 +38,7 @@ export const InactivityRanking = () => {
           Medidores Inativos
         </Text>
       </Card.Header>
-      <Card.Body css={{ pt: "0"}}>
+      <Card.Body>
         {loading ? (
           <Loading color="white" size="xl" />
         ) : (
