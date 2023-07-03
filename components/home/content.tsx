@@ -1,6 +1,7 @@
 import { Box } from "@/components/styles/box";
 import { Flex } from "@/components/styles/flex";
 import { Card, Grid, Text } from "@nextui-org/react";
+import { InactivityRanking } from "./inactivity-ranking";
 import { MetersMap } from "./meters-map";
 import { getBaseUrl } from "@/shared/utils/apiUtil";
 import { useEffect, useState } from "react";
@@ -120,7 +121,7 @@ export const Content = ({}: ContentProps) => {
               <MetersMap />
             </Grid>
             <Grid lg={4} md={12}>
-              <MockItem text="Ranking" height="$520"/>
+              <InactivityRanking/>
             </Grid>
           </Grid.Container>
         </Flex>
