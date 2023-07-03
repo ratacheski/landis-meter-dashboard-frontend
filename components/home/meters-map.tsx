@@ -63,6 +63,7 @@ export const MetersMap = () => {
       css={{
         borderRadius: "$xl",
         px: "$6",
+        height: "500px",
       }}
     >
       <Card.Header>
@@ -70,7 +71,7 @@ export const MetersMap = () => {
           Mapa de Medidores
         </Text>
       </Card.Header>
-      <Card.Body css={{ py: "$10", height: "400px", justifyContent: "center" }}>
+      <Card.Body css={{ py: "$10", justifyContent: "center" }}>
         {loading ? (
           <Loading color="white" size="xl" />
         ) : (
@@ -187,7 +188,6 @@ export const MetersMap = () => {
                           }
                     }
                     position={{ lat: meter.latitude, lng: meter.longitude }}
-                    title={meter.name}
                     onMouseOver={() => handleMarkerHover(meter)}
                   >
                     {meter.showInfoWindow ? (

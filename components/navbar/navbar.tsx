@@ -59,7 +59,7 @@ export const NavbarWrapper = ({children}: Props) => {
                },
             }}
          >
-            <Navbar.Content showIn="md">
+            <Navbar.Content showIn="md" aria-label='Menu'>
                <BurguerButton />
             </Navbar.Content>
             <Navbar.Content
@@ -91,13 +91,15 @@ export const NavbarWrapper = ({children}: Props) => {
                      },
                   }}
                   placeholder="Search..."
+                  aria-label='Search'
                />
             </Navbar.Content>
             <Navbar.Content>
                <Navbar.Content hideIn={'md'}>
                   <Flex align={'center'} css={{gap: '$4'}}>
                      <FeedbackIcon />
-                     <Text span>Feedback?</Text>
+                     <Text span 
+                  aria-label='Feedback'>Feedback?</Text>
                   </Flex>
                </Navbar.Content>
 

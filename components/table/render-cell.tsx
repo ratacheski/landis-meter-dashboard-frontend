@@ -10,7 +10,7 @@ import {Location} from "react-iconly"
 interface Props {
     item: any;
     columnKey: string | React.Key;
-    actions: TableAction[];
+    actions?: TableAction[];
 }
 
 const renderButton = (action: TableAction, item: any) => {
