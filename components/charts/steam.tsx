@@ -3,7 +3,7 @@ import { Text } from "@nextui-org/react";
 import Chart, { Props } from "react-apexcharts";
 
 type ChartProps = {
-  series: Props["series"];
+  series: ApexAxisChartSeries;
 };
 export const Steam = ({ series }: ChartProps) => {
   const options: Props["options"] = {
@@ -79,7 +79,7 @@ export const Steam = ({ series }: ChartProps) => {
       },
     },
   };
-  if (series[0]?.data.length > 0) {
+  if (series && series[0]?.data.length > 0) {
     return (
       <Box
         css={{

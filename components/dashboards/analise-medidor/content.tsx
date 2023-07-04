@@ -18,18 +18,31 @@ type DashboardAnaliseMedidorProps = {
   meters: Meter[];
 };
 
-export const DashboardAnaliseMedidor = ({ variables, meters }: DashboardAnaliseMedidorProps) => {
-  const [measurements, setMeasurements] = React.useState<Props["series"]>([]);
+export const DashboardAnaliseMedidor = ({
+  variables,
+  meters,
+}: DashboardAnaliseMedidorProps) => {
+  const [measurements, setMeasurements] = React.useState<ApexAxisChartSeries>(
+    []
+  );
   function handleMeasurements(measurements: Measurements[]) {
-    const measures = measurements.map(meas => {
-      return {
-        name: meas.variableName,
-        data: meas.measurements?.map((m) => ({
-          x: new Date(m.instant),
-          y: parseFloat(m.value).toFixed(3),
-        }))
+    const measures: ApexAxisChartSeries = measurements.reduce(function (
+      filtered: ApexAxisChartSeries,
+      meas
+    ) {
+      if (meas.measurements) {
+        var data = {
+          name: meas.variableName,
+          data: meas.measurements.map((m) => ({
+            x: new Date(m.instant),
+            y: parseFloat(m.value).toFixed(3),
+          })),
+        }
+        filtered.push(data);
       }
-    })
+      return filtered;
+    },
+    []);
     setMeasurements(measures);
   }
   return (

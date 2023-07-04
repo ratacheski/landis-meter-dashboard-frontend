@@ -1,5 +1,5 @@
 import { Button, Dropdown, Input, Loading, Text } from "@nextui-org/react";
-import React from "react";
+import React, { Key } from "react";
 import { Search } from "react-iconly";
 import { toast } from "react-toastify";
 import { getBaseUrl } from "@/shared/utils/apiUtil";
@@ -18,7 +18,7 @@ export const DashFilter = ({
   meters,
   handleMeasurements,
 }: Props) => {
-  const [selectedMeter, setSelectedMeter] = React.useState(new Set([]));
+  const [selectedMeter, setSelectedMeter] = React.useState<Set<Key>>(new Set([]));
   const [loading, setLoading] = React.useState(false);
   const [startDate, setStartDate] = React.useState();
   const [endDate, setEndDate] = React.useState();
@@ -26,7 +26,7 @@ export const DashFilter = ({
     () => Array.from(selectedMeter).join(",").replaceAll("_", " "),
     [selectedMeter]
   );
-  const [selectedVariable, setSelectedVariable] = React.useState(new Set([]));
+  const [selectedVariable, setSelectedVariable] = React.useState<Set<Key>>(new Set([]));
   const selectedVariableValues = React.useMemo(
     () => Array.from(selectedVariable).join(",").replaceAll("_", " "),
     [selectedVariable]
@@ -74,14 +74,9 @@ export const DashFilter = ({
   }
 
   function computeSelectVariableName() {
-    console.log(variables);
-    
-    
     const selVariables = variables.filter(
       (variable) => selectedVariableValues.split(",").includes(variable.id)
     );
-    console.log(selVariables);
-    
     return selVariables
       .map((variable) => variable.name + " - " + variable.acronym)
       .join(", ");

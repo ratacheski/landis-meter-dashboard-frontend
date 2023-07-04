@@ -38,6 +38,19 @@ export const FormMeter = ({ meter }: MedidoresProps) => {
     }
   }, []);
 
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+    setValue,
+    reset,
+    getValues,
+  } = useForm<Meter>({
+    defaultValues: {
+      ...meter,
+    },
+  });
+
   useEffect(() => {
     // Fetch data from API if `location` object is set
     if (userLocation && !meter.id) {
@@ -45,7 +58,8 @@ export const FormMeter = ({ meter }: MedidoresProps) => {
       meter.longitude = userLocation.longitude;
       reset(meter);
     }
-  }, [meter, userLocation]);
+  }, [meter, reset, userLocation]);
+  
   const formItems: FormItems[] = [
     {
       property: "name",
@@ -80,18 +94,7 @@ export const FormMeter = ({ meter }: MedidoresProps) => {
       required: true,
     },
   ];
-  const {
-    handleSubmit,
-    register,
-    formState: { errors },
-    setValue,
-    reset,
-    getValues,
-  } = useForm<Meter>({
-    defaultValues: {
-      ...meter,
-    },
-  });
+
 
   const onSubmit = handleSubmit(async (data: Meter) => {
     const url = `${getBaseUrl()}/meter${meter.id ? `/${meter.id}` : ""}`;
