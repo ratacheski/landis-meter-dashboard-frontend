@@ -2,7 +2,7 @@ import { Button, Dropdown, Input, Loading, Text } from "@nextui-org/react";
 import React, { Key } from "react";
 import { Search } from "react-iconly";
 import { toast } from "react-toastify";
-import { getBaseUrl } from "@/shared/utils/apiUtil";
+import { getPublicBaseUrl } from "@/shared/utils/apiUtil";
 import { Meter, Variable } from "@/shared/utils/types";
 import { Box } from "@/components/styles/box";
 import { Flex } from "@/components/styles/flex";
@@ -52,7 +52,7 @@ export const DashFilter = ({
     if (endDate) {
       params.append("endDate", new Date(endDate).toISOString());
     }
-    const url = `${getBaseUrl()}/measurement?`;
+    const url = `${getPublicBaseUrl()}/measurement?`;
     fetch(url + params.toString(), {
       method: "GET",
       headers: {

@@ -1,87 +1,142 @@
-import {Button, Col, Row, Tooltip} from "@nextui-org/react";
+import { Button, Col, NextUITheme, NextUIThemeContext, Row, Tooltip, useTheme } from "@nextui-org/react";
 import React from "react";
-import {DeleteIcon} from "@/components/icons/table/delete-icon";
-import {EditIcon} from "@/components/icons/table/edit-icon";
-import {EyeIcon} from "@/components/icons/table/eye-icon";
-import {TableAction} from "./data-table.interface";
-import {IconButton} from "./table.styled";
-import {Location} from "react-iconly"
+import { DeleteIcon } from "@/components/icons/table/delete-icon";
+import { EditIcon } from "@/components/icons/table/edit-icon";
+import { EyeIcon } from "@/components/icons/table/eye-icon";
+import { TableAction } from "./data-table.interface";
+import { IconButton } from "./table.styled";
+import { Location } from "react-iconly";
 import { ExportIcon } from "../icons/accounts/export-icon";
 
 interface Props {
-    item: any;
-    columnKey: string | React.Key;
-    actions?: TableAction[];
+  item: any;
+  columnKey: string | React.Key;
+  actions?: TableAction[];
 }
 
-const renderButton = (action: TableAction, item: any) => {
-    switch (action.icon) {
-        case "delete":
-            return (
-                <IconButton onClick={() => action.onClick(item)}>
-                    <DeleteIcon size={25} fill={action.color || "#FF0080"}/>
-                </IconButton>
-            );
-        case "edit":
-            return (
-                <IconButton onClick={() => action.onClick(item)}>
-                    <EditIcon size={25} fill={action.color || "#979797"}/>
-                </IconButton>
-            );
-        case "detail":
-            return (
-                <IconButton onClick={() => action.onClick(item)}>
-                    <EyeIcon size={25} fill={action.color || "#979797"}/>
-                </IconButton>
-            );
-        case "location":
-            return (
-                <IconButton onClick={() => action.onClick(item)}>
-                    <Location set="bold" primaryColor="blueviolet"/>
-                </IconButton>
-            );
-        case "export":
-                return (
-                    <IconButton onClick={() => action.onClick(item)}>
-                        <ExportIcon size={25} fill={action.color || "#979797"}/>
-                    </IconButton>
-                );
-        default:
-            return (
-                <Button            // @ts-ignore
-                    color={action.color || "primary"}
-                    auto
-                    onPress={() => action.onClick(item)}
-                >
-                    {action.name}
-                </Button>
-            );
-    }
+const renderButton = (action: TableAction, item: any, theme: NextUITheme) => {
+
+  switch (action.icon) {
+    case "delete":
+      return (
+        <IconButton
+          onClick={() => action.onClick(item)}
+          disabled={action.disabled ? action.disabled(item) : false}
+        >
+          <DeleteIcon
+            size={25}
+            fill={
+              action.disabled
+                ? action.disabled(item)
+                  ? "#979797"
+                  :  action.color || theme.colors.error.value
+                : action.color || theme.colors.error.value
+            }
+          />
+        </IconButton>
+      );
+    case "edit":
+      return (
+        <IconButton
+          onClick={() => action.onClick(item)}
+          disabled={action.disabled ? action.disabled(item) : false}
+        >
+          <EditIcon size={25} 
+            fill={
+              action.disabled
+                ? action.disabled(item)
+                  ? "#979797"
+                  :  action.color || theme.colors.primary.value
+                : action.color || theme.colors.primary.value
+            } />
+        </IconButton>
+      );
+    case "detail":
+      return (
+        <IconButton
+          onClick={() => action.onClick(item)}
+          disabled={action.disabled ? action.disabled(item) : false}
+        >
+          <EyeIcon size={25} 
+            fill={
+              action.disabled
+                ? action.disabled(item)
+                  ? "#979797"
+                  :  action.color || theme.colors.primary.value
+                : action.color || theme.colors.primary.value
+            } />
+        </IconButton>
+      );
+    case "location":
+      return (
+        <IconButton
+          onClick={() => action.onClick(item)}
+          disabled={action.disabled ? action.disabled(item) : false}
+        >
+          <Location set="bold" primaryColor="blueviolet" />
+        </IconButton>
+      );
+    case "export":
+      return (
+        <IconButton
+          onClick={() => action.onClick(item)}
+          disabled={action.disabled ? action.disabled(item) : false}
+        >
+          <ExportIcon size={25} 
+            fill={
+              action.disabled
+                ? action.disabled(item)
+                  ? "#979797"
+                  :  action.color || theme.colors.secondary.value
+                : action.color || theme.colors.secondary.value
+            } />
+        </IconButton>
+      );
+    default:
+      return (
+        <Button // @ts-ignore
+          color={action.color || "primary"}
+          auto
+          onPress={() => action.onClick(item)}
+          disabled={action.disabled ? action.disabled(item) : false}
+        >
+          {action.name}
+        </Button>
+      );
+  }
 };
 
-export const RenderCell = ({item, columnKey, actions}: Props) => {
-    // @ts-ignore
-    const cellValue = item[columnKey];
-    switch (columnKey) {
-        case "actions":
+export const RenderCell = ({ item, columnKey, actions }: Props) => {
+
+  const { theme } = useTheme();
+  // @ts-ignore
+  const cellValue = item[columnKey];
+  switch (columnKey) {
+    case "actions":
+      return (
+        <Row
+          justify="center"
+          align="center"
+          css={{ gap: "$8", "@md": { gap: 0 } }}
+        >
+          {actions.map((action) => {
             return (
-                <Row
-                    justify="center"
-                    align="center"
-                    css={{gap: "$8", "@md": {gap: 0}}}
+              <Col css={{ d: "flex" }} key={action.name}>
+                <Tooltip
+                  content={
+                    typeof action.tooltip === "function"
+                      ? action.tooltip(item)
+                      : action.tooltip
+                  }
                 >
-                    {actions.map((action) => {
-                        return (
-                            <Col css={{d: "flex"}} key={action.name}>
-                                <Tooltip content={action.tooltip}>
-                                    {renderButton(action, item)}
-                                </Tooltip>
-                            </Col>
-                        );
-                    })}
-                </Row>
+                  {renderButton(action, item, theme)}
+                </Tooltip>
+              </Col>
             );
-        default:
-            return cellValue;
-    }
+          })}
+        </Row>
+      );
+    default:
+      return cellValue;
+  }
 };

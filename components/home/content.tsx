@@ -3,7 +3,7 @@ import { Flex } from "@/components/styles/flex";
 import { Card, Grid, Text } from "@nextui-org/react";
 import { InactivityRanking } from "./inactivity-ranking";
 import { MetersMap } from "./meters-map";
-import { getBaseUrl } from "@/shared/utils/apiUtil";
+import { getPublicBaseUrl } from "@/shared/utils/apiUtil";
 import { useEffect, useState } from "react";
 import { BigNumberCard } from "@/components/home/big-number-card.tsx";
 import { CardBalance1 } from "./card-balance1";
@@ -20,7 +20,7 @@ export const Content = ({}: ContentProps) => {
   useEffect(() => {
     const fetchMeterCount = async () => {
       try {
-        const url = `${getBaseUrl()}/meter/count`;
+        const url = `${getPublicBaseUrl()}/meter/count`;
         const response = await fetch(url);
         if (response.ok) {
           const count = await response.json();
@@ -36,7 +36,7 @@ export const Content = ({}: ContentProps) => {
 
     const fetchInactiveMeterCount = async () => {
       try {
-        const url = `${getBaseUrl()}/meter/count?active=False`;
+        const url = `${getPublicBaseUrl()}/meter/count?active=False`;
         const response = await fetch(url);
         if (response.ok) {
           const count = await response.json();
@@ -51,7 +51,7 @@ export const Content = ({}: ContentProps) => {
 
     const fetchActiveMeterCount = async () => {
       try {
-        const url = `${getBaseUrl()}/meter/count?active=True`;
+        const url = `${getPublicBaseUrl()}/meter/count?active=True`;
         const response = await fetch(url);
         if (response.ok) {
           const count = await response.json();

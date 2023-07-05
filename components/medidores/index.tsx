@@ -16,7 +16,7 @@ import {
 } from "@/components/table/data-table.interface";
 import { useRouter } from "next/router";
 import { DataTable } from "@/components/table/data-table";
-import { getBaseUrl } from "@/shared/utils/apiUtil";
+import { getPublicBaseUrl } from "@/shared/utils/apiUtil";
 import MapModal from "./map-modal";
 import { Meter } from "@/shared/utils/types";
 import { toast } from "react-toastify";
@@ -32,7 +32,7 @@ export const Medidores = ({ meters }: MedidoresProps) => {
   const closeMapModalHandler = (save = false) => {
     setMapVisible(false);
     if (save) {
-      const url = `${getBaseUrl()}/meter/${itemToShowMap.id}`;
+      const url = `${getPublicBaseUrl()}/meter/${itemToShowMap.id}`;
       fetch(url, {
         method: "PUT",
         headers: {
@@ -61,7 +61,7 @@ export const Medidores = ({ meters }: MedidoresProps) => {
     },
     { icon: "location", onClick: (item) => verLocalizacao(item) },
     { icon: "edit", onClick: (item) => editar(item) },
-    { icon: "delete", onClick: (item) => showDelete(item) },
+    { icon: "delete", onClick: (item) => showDelete(item)},
   ];
 
   function editar(item: any): void {
@@ -83,7 +83,7 @@ export const Medidores = ({ meters }: MedidoresProps) => {
   }
 
   async function copyToken(item: any) {
-    const url = `${getBaseUrl()}/meter/${item.id}/token`;
+    const url = `${getPublicBaseUrl()}/meter/${item.id}/token`;
     const response = await fetch(url);
     if (response.ok) {
       const token = await response.json();
@@ -105,7 +105,7 @@ export const Medidores = ({ meters }: MedidoresProps) => {
 
   const closeDeleteHandler = (confirm: boolean) => {
     if (confirm) {
-      const url = `${getBaseUrl()}/meter/${itemToDelete.id}`;
+      const url = `${getPublicBaseUrl()}/meter/${itemToDelete.id}`;
       fetch(url, {
         method: "DELETE",
       })

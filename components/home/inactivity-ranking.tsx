@@ -1,4 +1,4 @@
-import { getBaseUrl } from "@/shared/utils/apiUtil";
+import { getPublicBaseUrl } from "@/shared/utils/apiUtil";
 import { Meter } from "@/shared/utils/types";
 import { Card, Loading, Text } from "@nextui-org/react";
 import React from "react";
@@ -15,7 +15,7 @@ export const InactivityRanking = () => {
   ];
   React.useEffect(() => {
     const fetchMeters = async () => {
-      const url = `${getBaseUrl()}/meter/inactive`;
+      const url = `${getPublicBaseUrl()}/meter/inactive`;
       const response = await fetch(url);
       const data = await response.json();
       setMeters(data);

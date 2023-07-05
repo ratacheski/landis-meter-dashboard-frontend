@@ -11,7 +11,7 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-ENV NEXT_PUBLIC_BASE_URL http://10.0.0.5:9090
+ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
 
 RUN npm run build
@@ -22,7 +22,6 @@ WORKDIR /app
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV PORT 3000
-ENV NEXT_PUBLIC_BASE_URL http://10.0.0.5:9090
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
