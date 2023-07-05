@@ -3,7 +3,7 @@ import React from "react";
 import { Flex } from "@/components/styles/flex";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
-import { getBaseUrl } from "@/shared/utils/apiUtil";
+import { getPublicBaseUrl } from "@/shared/utils/apiUtil";
 import { toast } from "react-toastify";
 import { Variable } from "@/shared/utils/types";
 
@@ -67,7 +67,7 @@ export const FormVariable = ({ variable }: VariaveisProps) => {
   });
 
   const onSubmit = handleSubmit(async (data: Variable) => {
-    const url = `${getBaseUrl()}/variable${
+    const url = `${getPublicBaseUrl()}/variable${
       variable.id ? `/${variable.id}` : ""
     }`;
     const method = variable.id ? "PUT" : "POST";

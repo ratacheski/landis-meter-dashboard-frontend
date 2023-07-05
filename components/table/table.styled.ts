@@ -12,6 +12,9 @@ export const IconButton = styled('button', {
    '&:hover': {
       opacity: '0.8',
    },
+   '&:disabled': {
+      cursor: 'not-allowed',
+   },
    '&:active': {
       opacity: '0.6',
    },

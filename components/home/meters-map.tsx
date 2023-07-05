@@ -1,4 +1,4 @@
-import { getBaseUrl } from "@/shared/utils/apiUtil";
+import { getPublicBaseUrl } from "@/shared/utils/apiUtil";
 import { Meter } from "@/shared/utils/types";
 import { Card, Loading, Text, Image } from "@nextui-org/react";
 import {
@@ -15,7 +15,7 @@ export const MetersMap = () => {
   const [meters, setMeters] = React.useState<Meter[]>([]);
   React.useEffect(() => {
     const fetchMeters = async () => {
-      const url = `${getBaseUrl()}/meter`;
+      const url = `${getPublicBaseUrl()}/meter`;
       const response = await fetch(url);
       const data = await response.json();
       setMeters(data);

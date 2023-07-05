@@ -5,8 +5,9 @@ export interface TableAction {
   name?: string;
   icon?: string;
   color?: NormalColors|string;
-  tooltip?: string;
+  tooltip?: ((item: any) => string) | string;
   onClick: (item: any) => void;
+  disabled?: (item: any) => boolean;
 }
 
 export interface TableColumn {

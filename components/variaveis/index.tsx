@@ -1,15 +1,22 @@
 import { Button, Modal, Text } from "@nextui-org/react";
 import Link from "next/link";
 import React from "react";
-import { Breadcrumbs, Crumb, CrumbLink } from "@/components/breadcrumb/breadcrumb.styled";
+import {
+  Breadcrumbs,
+  Crumb,
+  CrumbLink,
+} from "@/components/breadcrumb/breadcrumb.styled";
 import { ExportIcon } from "@/components/icons/accounts/export-icon";
 import { HouseIcon } from "@/components/icons/breadcrumb/house-icon";
 import { PaymentsIcon } from "@/components/icons/sidebar/payments-icon";
 import { Flex } from "@/components/styles/flex";
-import { TableAction, TableColumn } from "@/components/table/data-table.interface";
+import {
+  TableAction,
+  TableColumn,
+} from "@/components/table/data-table.interface";
 import { useRouter } from "next/router";
 import { DataTable } from "@/components/table/data-table";
-import { getBaseUrl } from "@/shared/utils/apiUtil";
+import { getPublicBaseUrl } from "@/shared/utils/apiUtil";
 import { toast } from "react-toastify";
 import { Variable } from "@/shared/utils/types";
 
@@ -27,15 +34,26 @@ export const Variaveis = ({ variables }: VariaveisProps) => {
     { name: "Nome", uid: "name" },
     { name: "Sigla", uid: "acronym" },
     { name: "Unidade", uid: "unit" },
-    { name: "Actions", uid: "actions", hideHeader: true },
+    { name: "Actions", uid: "actions", hideHeader: true},
   ];
 
   const actions: TableAction[] = [
     // Duas outras opções já estão implementadas para as actions e estão comentadas abaixo
     // {name: "Exemplo Botão", onClick: (item) => editar(item), color: "primary"},
     // {icon: "detail", onClick: (item) => editar(item)},
-    { icon: "edit", onClick: (item) => editar(item) },
-    { icon: "delete", onClick: (item) => showDelete(item) },
+    {
+      icon: "edit",
+      onClick: (item) => editar(item),
+      tooltip: "Editar Variável",
+    },
+    {
+      icon: "delete",
+      onClick: (item) => showDelete(item),
+      disabled: (item) => item.standard,
+      tooltip: (item) => item.standard
+        ? "Não é possível excluir uma variável padrão"
+        : "Excluir Variável",
+    },
   ];
 
   function editar(item: any): void {
@@ -53,7 +71,7 @@ export const Variaveis = ({ variables }: VariaveisProps) => {
 
   const closeDeleteHandler = (confirm: boolean) => {
     if (confirm) {
-      const url = `${getBaseUrl()}/variable/${itemToDelete.id}`;
+      const url = `${getPublicBaseUrl()}/variable/${itemToDelete.id}`;
       fetch(url, {
         method: "DELETE",
       })

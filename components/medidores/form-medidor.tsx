@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Flex } from "@/components/styles/flex";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
-import { getBaseUrl } from "@/shared/utils/apiUtil";
+import { getPublicBaseUrl } from "@/shared/utils/apiUtil";
 import { ToastContainer, toast } from "react-toastify";
 import { Meter } from "@/shared/utils/types";
 import "react-toastify/dist/ReactToastify.css";
@@ -97,7 +97,7 @@ export const FormMeter = ({ meter }: MedidoresProps) => {
 
 
   const onSubmit = handleSubmit(async (data: Meter) => {
-    const url = `${getBaseUrl()}/meter${meter.id ? `/${meter.id}` : ""}`;
+    const url = `${getPublicBaseUrl()}/meter${meter.id ? `/${meter.id}` : ""}`;
     const method = meter.id ? "PUT" : "POST";
     const response = await fetch(url, {
       method: method,
