@@ -3,7 +3,7 @@ import React, { Key } from "react";
 import { Search } from "react-iconly";
 import { toast } from "react-toastify";
 import { getPublicBaseUrl } from "@/shared/utils/apiUtil";
-import { Meter, Variable } from "@/shared/utils/types";
+import { Meter, Variable, Measurements } from "@/shared/utils/types";
 import { Box } from "@/components/styles/box";
 import { Flex } from "@/components/styles/flex";
 
@@ -11,12 +11,14 @@ type Props = {
   variables: Variable[];
   meters: Meter[];
   handleMeasurements: (measurements: any) => void;
+  measurements: Measurements[];
 };
 
 export const DashFilter = ({
   variables,
   meters,
   handleMeasurements,
+  measurements,
 }: Props) => {
   const [selectedMeter, setSelectedMeter] = React.useState<Set<Key>>(new Set([]));
   const [loading, setLoading] = React.useState(false);

@@ -6,7 +6,8 @@ import { Box } from "@/components/styles/box";
 import { Flex } from "@/components/styles/flex";
 import { DashFilter } from "./dash-filter";
 import { Props } from "react-apexcharts";
-
+import { TabelaAnalitica } from "./tabela-analitica";
+import { TabelaEstatisticas } from "./tabela-estatisticas";
 const Chart = dynamic(
   () => import("@/components/charts/steam").then((mod) => mod.Steam),
   {
@@ -43,7 +44,9 @@ export const DashboardAnaliseMedidor = ({
       return filtered;
     },
     []);
+    
     setMeasurements(measures);
+
   }
   return (
     <Box css={{ overflow: "hidden", height: "100%" }}>
@@ -105,7 +108,22 @@ export const DashboardAnaliseMedidor = ({
             >
               <Chart series={measurements} />
             </Box>
+            
           </Box>
+          <TabelaAnalitica
+            meters={meters}
+            variables={variables}
+            measurements = {measurements}
+            handleMeasurements={handleMeasurements}
+          />
+          <TabelaEstatisticas
+            meters={meters}
+            variables={variables}
+            measurements = {measurements}
+            handleMeasurements={handleMeasurements}
+          />
+          
+          
         </Flex>
       </Flex>
     </Box>
