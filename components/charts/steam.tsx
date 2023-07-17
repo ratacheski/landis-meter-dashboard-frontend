@@ -1,84 +1,24 @@
 import { Box } from "@/components/styles/box";
 import { Text } from "@nextui-org/react";
-import Chart, { Props } from "react-apexcharts";
+import { ApexOptions } from "apexcharts";
+import Chart from "react-apexcharts";
 
 type ChartProps = {
   series: ApexAxisChartSeries;
+  options: ApexOptions;
+  noOptionMessage?: String;
+  noResultMessage?: String;
+  height?: string | number;
+  type: ApexChart["type"];
 };
-export const Steam = ({ series }: ChartProps) => {
-  const options: Props["options"] = {
-    chart: {
-      type: "area",
-      animations: {
-        easing: "linear",
-        speed: 800,
-      },
-      sparkline: {
-        enabled: false,
-      },
-      brush: {
-        enabled: false,
-      },
-      id: "basic-bar",
-      fontFamily: "Inter, sans-serif",
-      foreColor: "var(--nextui-colors-accents9)",
-      stacked: true,
-      toolbar: {
-         show: true,
-      }
-    },
-    legend: {
-      show: true,
-      position: 'top',
-      horizontalAlign: 'left',
-    },
-
-    xaxis: {
-      type: "datetime",
-      labels: {
-        // show: false,
-        style: {
-          colors: "var(--nextui-colors-accents8)",
-          fontFamily: "Inter, sans-serif",
-        },
-      },
-      axisBorder: {
-        color: "var(--nextui-colors-border)",
-      },
-      axisTicks: {
-        color: "var(--nextui-colors-border)",
-      },
-    },
-    yaxis: {
-      labels: {
-        style: {
-          colors: "var(--nextui-colors-accents8)",
-          fontFamily: "Inter, sans-serif",
-        },
-        formatter: function (value: any) {
-          return value.toFixed(2);
-        }
-      },
-    },
-    tooltip: {
-      theme: "dark",
-      x: {
-         format: "dd/MM/yy HH:mm",
-      },
-    },
-    grid: {
-      show: true,
-      borderColor: "var(--nextui-colors-border)",
-      strokeDashArray: 0,
-      position: "back",
-    },
-    stroke: {
-      curve: "smooth",
-      fill: {
-        colors: ["red"],
-      },
-    },
-  };
+export const Steam = ({
+  series,
+  noOptionMessage,
+  noResultMessage,
+  options,
+  type,
+  height = 425,
+}: ChartProps) => {
   if (series && series[0]?.data.length > 0) {
     return (
       <Box
@@ -88,7 +28,7 @@ export const Steam = ({ series }: ChartProps) => {
         }}
       >
         <div id="chart">
-          <Chart options={options} series={series} type="area" height={425} />
+          <Chart options={options} series={series} type={type} height={height} />
         </div>
       </Box>
     );
@@ -110,8 +50,8 @@ export const Steam = ({ series }: ChartProps) => {
           }}
         >
           {series?.length == 0
-            ? "Selecione um Medidor e uma Variável!"
-            : "Nenhum dado encontrado!"}
+            ? noOptionMessage
+            : noResultMessage || "Nenhum dado encontrado!"}
         </Text>
       </Box>
     );

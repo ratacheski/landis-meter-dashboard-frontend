@@ -25,6 +25,22 @@ export type Measurements = {
   variableAcronym?: string;
   variableUnit?: string;
   measurements?: MeasurementeTuple[];
+  statistics?: Statistics;
+};
+
+export type Statistics = {
+  min?: number;
+  max?: number;
+  avg?: number;
+  std?: number;
+  median?: number;
+  mode?: number;
+  normalDistribution?: NormalDistribution[];
+};
+
+export type NormalDistribution = {
+  x: number;
+  y: number;
 };
 
 export type MeasurementeTuple = {

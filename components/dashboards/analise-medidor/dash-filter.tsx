@@ -1,5 +1,5 @@
 import { Button, Dropdown, Input, Loading, Text } from "@nextui-org/react";
-import React, { Key } from "react";
+import React, { Key, useEffect } from "react";
 import { Search } from "react-iconly";
 import { toast } from "react-toastify";
 import { getPublicBaseUrl } from "@/shared/utils/apiUtil";
@@ -11,14 +11,24 @@ type Props = {
   variables: Variable[];
   meters: Meter[];
   handleMeasurements: (measurements: any) => void;
+  handleReset: () => void;
+  granularity: string;
+  pickedDate: Date;
+  firstRender: boolean;
 };
 
 export const DashFilter = ({
   variables,
   meters,
+  granularity,
+  pickedDate,
+  firstRender,
   handleMeasurements,
+  handleReset,
 }: Props) => {
-  const [selectedMeter, setSelectedMeter] = React.useState<Set<Key>>(new Set([]));
+  const [selectedMeter, setSelectedMeter] = React.useState<Set<Key>>(
+    new Set([])
+  );
   const [loading, setLoading] = React.useState(false);
   const [startDate, setStartDate] = React.useState();
   const [endDate, setEndDate] = React.useState();
@@ -26,11 +36,25 @@ export const DashFilter = ({
     () => Array.from(selectedMeter).join(",").replaceAll("_", " "),
     [selectedMeter]
   );
-  const [selectedVariable, setSelectedVariable] = React.useState<Set<Key>>(new Set([]));
+  const [selectedVariable, setSelectedVariable] = React.useState<Set<Key>>(
+    new Set([])
+  );
   const selectedVariableValues = React.useMemo(
     () => Array.from(selectedVariable).join(",").replaceAll("_", " "),
     [selectedVariable]
   );
+
+  useEffect(() => {
+    if (granularity && !firstRender) {
+      handleSearch();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [granularity]);
+
+  async function handleClick() {
+    await handleReset();
+    handleSearch();
+  }
 
   function handleSearch() {
     if (!selectedMeterValue) {
@@ -45,13 +69,40 @@ export const DashFilter = ({
     const params = new URLSearchParams({
       meterID: selectedMeterValue,
       variables: selectedVariableValues,
+      granularity,
     });
-    if (startDate) {
-      params.append("startDate", new Date(startDate).toISOString());
+    if (!firstRender) {
+      let startPickedDate = new Date(pickedDate);
+      let endPickedDate = new Date(pickedDate);
+      switch (granularity) {
+        case "MONTH":
+          startPickedDate = new Date(pickedDate.getFullYear(), 0, 1);
+          endPickedDate = new Date(pickedDate.getFullYear(), 11, 31);
+          break;
+        case "DAYS":
+          startPickedDate = new Date(pickedDate.getFullYear(), pickedDate.getMonth(), 1);
+          endPickedDate = new Date(pickedDate.getFullYear(), pickedDate.getMonth() + 1, 0);
+          break;
+        case "HOURS":
+          startPickedDate.setUTCHours(0, 0, 0, 0);
+          endPickedDate.setUTCHours(23,59,59,999);
+          break;
+        case "MINUTES":
+          startPickedDate.setUTCMinutes(0, 0, 0);
+          endPickedDate.setUTCMinutes(59, 59, 999);
+          break;
+      }
+      params.append("startDate",startPickedDate.toISOString());
+      params.append("endDate", endPickedDate.toISOString());
+    } else {
+      if (startDate) {
+        params.append("startDate", new Date(startDate).toISOString());
+      }
+      if (endDate) {
+        params.append("endDate", new Date(endDate).toISOString());
+      }
     }
-    if (endDate) {
-      params.append("endDate", new Date(endDate).toISOString());
-    }
+
     const url = `${getPublicBaseUrl()}/measurement?`;
     fetch(url + params.toString(), {
       method: "GET",
@@ -74,8 +125,8 @@ export const DashFilter = ({
   }
 
   function computeSelectVariableName() {
-    const selVariables = variables.filter(
-      (variable) => selectedVariableValues.split(",").includes(variable.id)
+    const selVariables = variables.filter((variable) =>
+      selectedVariableValues.split(",").includes(variable.id)
     );
     return selVariables
       .map((variable) => variable.name + " - " + variable.acronym)
@@ -178,7 +229,7 @@ export const DashFilter = ({
           <Button
             auto
             iconRight={<Search filled primaryColor="#ffffff" />}
-            onPress={handleSearch}
+            onPress={handleClick}
           >
             Buscar
           </Button>
