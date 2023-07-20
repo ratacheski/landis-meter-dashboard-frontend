@@ -1,37 +1,34 @@
-import { Button, Dropdown, Input, Loading, Text } from "@nextui-org/react";
-import React, { Key, useEffect } from "react";
-import { Search } from "react-iconly";
-import { toast } from "react-toastify";
-import { getPublicBaseUrl } from "@/shared/utils/apiUtil";
-import { Meter, Variable } from "@/shared/utils/types";
 import { Box } from "@/components/styles/box";
 import { Flex } from "@/components/styles/flex";
+import { Meter, Variable } from "@/shared/utils/types";
+import { Button, Dropdown, Input, Loading, Text } from "@nextui-org/react";
+import React, { Key } from "react";
+import { Search } from "react-iconly";
+import { toast } from "react-toastify";
 
 type Props = {
   variables: Variable[];
   meters: Meter[];
-  handleMeasurements: (measurements: any) => void;
-  handleReset: () => void;
-  granularity: string;
-  pickedDate: Date;
-  firstRender: boolean;
+  handleMeasurements: (
+    selectedMeterValue: string,
+    selectedVariableValues: string,
+    startDate: string,
+    endDate: string,
+    newGranularity: string
+  ) => void;
 };
 
 export const DashFilter = ({
   variables,
   meters,
-  granularity,
-  pickedDate,
-  firstRender,
   handleMeasurements,
-  handleReset,
 }: Props) => {
   const [selectedMeter, setSelectedMeter] = React.useState<Set<Key>>(
     new Set([])
   );
   const [loading, setLoading] = React.useState(false);
-  const [startDate, setStartDate] = React.useState();
-  const [endDate, setEndDate] = React.useState();
+  const [startDate, setStartDate] = React.useState<string>('');
+  const [endDate, setEndDate] = React.useState<string>('');
   const selectedMeterValue = React.useMemo(
     () => Array.from(selectedMeter).join(",").replaceAll("_", " "),
     [selectedMeter]
@@ -44,19 +41,7 @@ export const DashFilter = ({
     [selectedVariable]
   );
 
-  useEffect(() => {
-    if (granularity && !firstRender) {
-      handleSearch();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [granularity]);
-
-  async function handleClick() {
-    await handleReset();
-    handleSearch();
-  }
-
-  function handleSearch() {
+  async function handleSearch() {
     if (!selectedMeterValue) {
       toast.error("Selecione um medidor!");
       return;
@@ -66,71 +51,21 @@ export const DashFilter = ({
       return;
     }
     setLoading(true);
-    const params = new URLSearchParams({
-      meterID: selectedMeterValue,
-      variables: selectedVariableValues,
-      granularity,
-    });
-    if (!firstRender) {
-      let startPickedDate = new Date(pickedDate);
-      let endPickedDate = new Date(pickedDate);
-      switch (granularity) {
-        case "MONTH":
-          startPickedDate = new Date(pickedDate.getFullYear(), 0, 1);
-          endPickedDate = new Date(pickedDate.getFullYear(), 11, 31);
-          break;
-        case "DAYS":
-          startPickedDate = new Date(pickedDate.getFullYear(), pickedDate.getMonth(), 1);
-          endPickedDate = new Date(pickedDate.getFullYear(), pickedDate.getMonth() + 1, 0);
-          break;
-        case "HOURS":
-          startPickedDate.setUTCHours(0, 0, 0, 0);
-          endPickedDate.setUTCHours(23,59,59,999);
-          break;
-        case "MINUTES":
-          startPickedDate.setUTCMinutes(0, 0, 0);
-          endPickedDate.setUTCMinutes(59, 59, 999);
-          break;
-      }
-      params.append("startDate",startPickedDate.toISOString());
-      params.append("endDate", endPickedDate.toISOString());
-    } else {
-      if (startDate) {
-        params.append("startDate", new Date(startDate).toISOString());
-      }
-      if (endDate) {
-        params.append("endDate", new Date(endDate).toISOString());
-      }
-    }
-
-    const url = `${getPublicBaseUrl()}/measurement?`;
-    fetch(url + params.toString(), {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then(async (resp) => {
-        if (resp.ok) {
-          const measurements = await resp.json();
-          handleMeasurements(measurements);
-        } else {
-          const { message } = await resp.json();
-          toast.error(message);
-        }
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    await handleMeasurements(selectedMeterValue, selectedVariableValues, startDate, endDate, "DAYS");
+    setLoading(false);
   }
 
   function computeSelectVariableName() {
     const selVariables = variables.filter((variable) =>
       selectedVariableValues.split(",").includes(variable.id)
     );
-    return selVariables
-      .map((variable) => variable.name + " - " + variable.acronym)
-      .join(", ");
+    const firstVariableString = selVariables.map(
+      (variable) => variable.name + " - " + variable.acronym
+    )[0];
+    if (selVariables.length > 1) {
+      return firstVariableString + " e mais " + (selVariables.length - 1);
+    }
+    return firstVariableString;
   }
 
   return (
@@ -176,7 +111,7 @@ export const DashFilter = ({
             </Dropdown.Menu>
           </Dropdown>
           <Dropdown>
-            <Dropdown.Button css={{ tt: "capitalize" }}>
+            <Dropdown.Button css={{ tt: "capitalize", width: "250px" }}>
               {selectedVariableValues
                 ? computeSelectVariableName()
                 : "Selecione uma Variável"}
@@ -229,7 +164,7 @@ export const DashFilter = ({
           <Button
             auto
             iconRight={<Search filled primaryColor="#ffffff" />}
-            onPress={handleClick}
+            onPress={handleSearch}
           >
             Buscar
           </Button>
