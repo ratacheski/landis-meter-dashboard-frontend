@@ -14,6 +14,25 @@ const Chart = dynamic(
     ssr: false,
   }
 );
+
+
+export type AnalyticMeasurement = {
+  variableName: string;
+  instant?: number;
+  value?: string;
+  variableUnit?: string;
+};
+
+export type StatisticalMeasurement = {
+  avg: number;
+  max?: number;
+  median?: number;
+  min?: number;
+  mode?: number;
+  std?: number;
+};
+
+
 type DashboardAnaliseMedidorProps = {
   variables: Variable[];
   meters: Meter[];
@@ -23,11 +42,11 @@ export const DashboardAnaliseMedidor = ({
   variables,
   meters,
 }: DashboardAnaliseMedidorProps) => {
-  const [measurements, setMeasurements] = React.useState<ApexAxisChartSeries>(
-    []
-  );
-  function handleMeasurements(measurements: Measurements[]) {
-    const measures: ApexAxisChartSeries = measurements.reduce(function (
+  const [measurements, setMeasurements] = React.useState<ApexAxisChartSeries>([]);
+  const [analyticMeasurements, setAnalyticMeasurements] = React.useState<AnalyticMeasurement[]>([]);
+  const [statisticalMeasurements, setStatisticalMeasurements] = React.useState<StatisticalMeasurement[]>([]);
+  function handleMeasurements(filteredMeasurements: Measurements[]) {
+    const measures: ApexAxisChartSeries = filteredMeasurements.reduce(function (
       filtered: ApexAxisChartSeries,
       meas
     ) {
@@ -44,9 +63,56 @@ export const DashboardAnaliseMedidor = ({
       return filtered;
     },
     []);
-    
+  
+
+    const analyticMeasures: AnalyticMeasurement[] = filteredMeasurements.reduce(function (
+      filtered: AnalyticMeasurement[],
+      meas
+    ) {
+      if (meas.measurements) {
+        meas.measurements.forEach((m) => {
+          var data = {
+            variableName: meas.variableName,
+            variableUnit: meas.variableUnit,
+            instant: new Date(m.instant).toLocaleString(),
+            value: parseFloat(m.value)?.toFixed(3),
+          };
+          filtered.push(data);
+      });
+      }
+      return filtered;
+    },
+    []);
+
+    const statisticalMeasures: StatisticalMeasurement[] = filteredMeasurements.reduce(function (
+      filtered: StatisticalMeasurement[],
+      meas
+    ) {
+      if (meas.statistics) {
+        var data = {
+          name: meas.variableName,
+          avg: parseFloat(meas.statistics.avg).toFixed(3),
+          max: parseFloat(meas.statistics.max).toFixed(3),
+          median: parseFloat(meas.statistics.median).toFixed(3),
+          min: parseFloat(meas.statistics.min).toFixed(3),
+          mode: parseFloat(meas.statistics.mode).toFixed(3),
+          std: parseFloat(meas.statistics.std).toFixed(3),
+        }
+        filtered.push(data);
+      }
+      return filtered;
+    },
+    []);
+
+    //console.log(filteredMeasurements)
+    setAnalyticMeasurements(analyticMeasures);
+    //setAnalyticMeasurements([{variableName:'Var1', instant: '123', value : '123', variableUnit : 'unit1'}])
+    //setStatisticalMeasurements([{avg: 1, max: 2, median : 3, min : 4, mode : 3, std : 4}])
+    setStatisticalMeasurements(statisticalMeasures)
     setMeasurements(measures);
 
+
+    //
   }
   return (
     <Box css={{ overflow: "hidden", height: "100%" }}>
@@ -110,20 +176,16 @@ export const DashboardAnaliseMedidor = ({
             </Box>
             
           </Box>
-          <TabelaAnalitica
-            meters={meters}
-            variables={variables}
-            measurements = {measurements}
-            handleMeasurements={handleMeasurements}
-          />
+          <TabelaAnalitica 
+            key = {analyticMeasurements.length}
+            analyticMeasurements={analyticMeasurements}
+          />       
           <TabelaEstatisticas
-            meters={meters}
-            variables={variables}
-            measurements = {measurements}
-            handleMeasurements={handleMeasurements}
+          key = {statisticalMeasurements.length}
+          analyticMeasurements = {statisticalMeasurements}
           />
-          
-          
+
+    
         </Flex>
       </Flex>
     </Box>
