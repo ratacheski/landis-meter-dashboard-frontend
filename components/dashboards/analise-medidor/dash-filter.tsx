@@ -1,16 +1,21 @@
+import { Box } from "@/components/styles/box";
+import { Flex } from "@/components/styles/flex";
+import { Meter, Variable } from "@/shared/utils/types";
 import { Button, Dropdown, Input, Loading, Text } from "@nextui-org/react";
 import React, { Key } from "react";
 import { Search } from "react-iconly";
 import { toast } from "react-toastify";
-import { getPublicBaseUrl } from "@/shared/utils/apiUtil";
-import { Meter, Variable } from "@/shared/utils/types";
-import { Box } from "@/components/styles/box";
-import { Flex } from "@/components/styles/flex";
 
 type Props = {
   variables: Variable[];
   meters: Meter[];
-  handleMeasurements: (measurements: any) => void;
+  handleMeasurements: (
+    selectedMeterValue: string,
+    selectedVariableValues: string,
+    startDate: string,
+    endDate: string,
+    newGranularity: string
+  ) => void;
 };
 
 export const DashFilter = ({
@@ -18,21 +23,25 @@ export const DashFilter = ({
   meters,
   handleMeasurements,
 }: Props) => {
-  const [selectedMeter, setSelectedMeter] = React.useState<Set<Key>>(new Set([]));
+  const [selectedMeter, setSelectedMeter] = React.useState<Set<Key>>(
+    new Set([])
+  );
   const [loading, setLoading] = React.useState(false);
-  const [startDate, setStartDate] = React.useState();
-  const [endDate, setEndDate] = React.useState();
+  const [startDate, setStartDate] = React.useState<string>('');
+  const [endDate, setEndDate] = React.useState<string>('');
   const selectedMeterValue = React.useMemo(
     () => Array.from(selectedMeter).join(",").replaceAll("_", " "),
     [selectedMeter]
   );
-  const [selectedVariable, setSelectedVariable] = React.useState<Set<Key>>(new Set([]));
+  const [selectedVariable, setSelectedVariable] = React.useState<Set<Key>>(
+    new Set([])
+  );
   const selectedVariableValues = React.useMemo(
     () => Array.from(selectedVariable).join(",").replaceAll("_", " "),
     [selectedVariable]
   );
 
-  function handleSearch() {
+  async function handleSearch() {
     if (!selectedMeterValue) {
       toast.error("Selecione um medidor!");
       return;
@@ -42,44 +51,21 @@ export const DashFilter = ({
       return;
     }
     setLoading(true);
-    const params = new URLSearchParams({
-      meterID: selectedMeterValue,
-      variables: selectedVariableValues,
-    });
-    if (startDate) {
-      params.append("startDate", new Date(startDate).toISOString());
-    }
-    if (endDate) {
-      params.append("endDate", new Date(endDate).toISOString());
-    }
-    const url = `${getPublicBaseUrl()}/measurement?`;
-    fetch(url + params.toString(), {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then(async (resp) => {
-        if (resp.ok) {
-          const measurements = await resp.json();
-          handleMeasurements(measurements);
-        } else {
-          const { message } = await resp.json();
-          toast.error(message);
-        }
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    await handleMeasurements(selectedMeterValue, selectedVariableValues, startDate, endDate, "DAYS");
+    setLoading(false);
   }
 
   function computeSelectVariableName() {
-    const selVariables = variables.filter(
-      (variable) => selectedVariableValues.split(",").includes(variable.id)
+    const selVariables = variables.filter((variable) =>
+      selectedVariableValues.split(",").includes(variable.id)
     );
-    return selVariables
-      .map((variable) => variable.name + " - " + variable.acronym)
-      .join(", ");
+    const firstVariableString = selVariables.map(
+      (variable) => variable.name + " - " + variable.acronym
+    )[0];
+    if (selVariables.length > 1) {
+      return firstVariableString + " e mais " + (selVariables.length - 1);
+    }
+    return firstVariableString;
   }
 
   return (
@@ -125,7 +111,7 @@ export const DashFilter = ({
             </Dropdown.Menu>
           </Dropdown>
           <Dropdown>
-            <Dropdown.Button css={{ tt: "capitalize" }}>
+            <Dropdown.Button css={{ tt: "capitalize", width: "250px" }}>
               {selectedVariableValues
                 ? computeSelectVariableName()
                 : "Selecione uma Variável"}
