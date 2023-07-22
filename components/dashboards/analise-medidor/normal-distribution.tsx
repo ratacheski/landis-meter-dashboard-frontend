@@ -1,6 +1,9 @@
 import { Card, Grid, Text } from "@nextui-org/react";
 import { ApexOptions } from "apexcharts";
 import dynamic from "next/dynamic";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { Carousel } from "react-responsive-carousel";
+import { Flex } from "@/components/styles/flex";
 
 const Chart = dynamic(
   () => import("@/components/charts/steam").then((mod) => mod.Steam),
@@ -88,10 +91,15 @@ export default function NormalDistribution({
         </Text>
       </Card.Header>
       <Card.Body>
-        <Grid.Container gap={2} justify="center" direction="row">
+        <Carousel
+          autoPlay
+          infiniteLoop
+          showStatus={false}
+          showArrows={false}
+        >
           {distributions.map((distribution, index) => {
             return (
-              <Grid key={distribution.name} lg={12} md={12} direction="column">
+              <Flex key={distribution.name} direction="column">
                 <Text
                   h3
                   css={{
@@ -113,10 +121,10 @@ export default function NormalDistribution({
                   type="line"
                   height={250}
                 />
-              </Grid>
+              </Flex>
             );
           })}
-        </Grid.Container>
+        </Carousel>
       </Card.Body>
     </Card>
   );
