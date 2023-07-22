@@ -8,6 +8,8 @@ import { toast } from "react-toastify";
 import { DashFilter } from "./dash-filter";
 import { TabelaAnalitica } from "./tabela-analitica";
 import { TabelaEstatisticas } from "./tabela-estatisticas";
+import GraficoMedicoes from "./grafico-medicoes";
+import NormalDistribution from "./normal-distribution";
 
 export type AnalyticMeasurement = {
   variableName: string;
@@ -24,9 +26,6 @@ export type StatisticalMeasurement = {
   mode?: number;
   std?: number;
 };
-
-import GraficoMedicoes from "./grafico-medicoes";
-import NormalDistribution from "./normal-distribution";
 
 type DashboardAnaliseMedidorProps = {
   variables: Variable[];
