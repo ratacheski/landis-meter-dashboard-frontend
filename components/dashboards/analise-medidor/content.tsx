@@ -1,7 +1,7 @@
 import { Box } from "@/components/styles/box";
 import { Flex } from "@/components/styles/flex";
 import { getPublicBaseUrl } from "@/shared/utils/apiUtil";
-import { Meter, Variable } from "@/shared/utils/types";
+import { Measurements, Meter, Variable } from "@/shared/utils/types";
 import { Grid } from "@nextui-org/react";
 import React from "react";
 import { toast } from "react-toastify";
@@ -56,7 +56,7 @@ export const DashboardAnaliseMedidor = ({
       },
     });
     if (resp.ok) {
-      const measurements = await resp.json();
+      const measurements: Measurements[] = await resp.json();
       setDistributions(mapMeasurementsDistributions(measurements));
       setMeasurements(mapMeasurements(measurements));
     } else {
@@ -153,7 +153,7 @@ export const DashboardAnaliseMedidor = ({
   );
 };
 
-function mapMeasurements(measurements: any): ApexAxisChartSeries {
+function mapMeasurements(measurements: Measurements[]): ApexAxisChartSeries {
   return measurements.reduce(function (
     filtered: ApexAxisChartSeries,
     meas
@@ -174,7 +174,7 @@ function mapMeasurements(measurements: any): ApexAxisChartSeries {
     []);
 }
 
-function mapMeasurementsDistributions(measurements: any): ApexAxisChartSeries {
+function mapMeasurementsDistributions(measurements: Measurements[]): ApexAxisChartSeries {
   return measurements.reduce(function (filtered: ApexAxisChartSeries, meas) {
     if (meas?.statistics?.normalDistribution) {
       var data = {
