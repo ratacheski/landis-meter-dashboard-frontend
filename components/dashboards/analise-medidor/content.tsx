@@ -1,20 +1,13 @@
-import { Text } from "@nextui-org/react";
-import dynamic from "next/dynamic";
-import React from "react";
-import { Measurements, Meter, Variable } from "@/shared/utils/types";
 import { Box } from "@/components/styles/box";
 import { Flex } from "@/components/styles/flex";
+import { getPublicBaseUrl } from "@/shared/utils/apiUtil";
+import { Measurements, Meter, Variable } from "@/shared/utils/types";
+import { Grid } from "@nextui-org/react";
+import React from "react";
+import { toast } from "react-toastify";
 import { DashFilter } from "./dash-filter";
-import { Props } from "react-apexcharts";
 import { TabelaAnalitica } from "./tabela-analitica";
 import { TabelaEstatisticas } from "./tabela-estatisticas";
-const Chart = dynamic(
-  () => import("@/components/charts/steam").then((mod) => mod.Steam),
-  {
-    ssr: false,
-  }
-);
-
 
 export type AnalyticMeasurement = {
   variableName: string;
@@ -32,87 +25,110 @@ export type StatisticalMeasurement = {
   std?: number;
 };
 
+import GraficoMedicoes from "./grafico-medicoes";
+import NormalDistribution from "./normal-distribution";
 
 type DashboardAnaliseMedidorProps = {
   variables: Variable[];
   meters: Meter[];
 };
-
 export const DashboardAnaliseMedidor = ({
   variables,
   meters,
 }: DashboardAnaliseMedidorProps) => {
-  const [measurements, setMeasurements] = React.useState<ApexAxisChartSeries>([]);
-  const [analyticMeasurements, setAnalyticMeasurements] = React.useState<AnalyticMeasurement[]>([]);
-  const [statisticalMeasurements, setStatisticalMeasurements] = React.useState<StatisticalMeasurement[]>([]);
-  function handleMeasurements(filteredMeasurements: Measurements[]) {
-    const measures: ApexAxisChartSeries = filteredMeasurements.reduce(function (
-      filtered: ApexAxisChartSeries,
-      meas
-    ) {
-      if (meas.measurements) {
-        var data = {
-          name: meas.variableName,
-          data: meas.measurements.map((m) => ({
-            x: new Date(m.instant),
-            y: parseFloat(m.value).toFixed(3),
-          })),
-        }
-        filtered.push(data);
-      }
-      return filtered;
-    },
-    []);
-  
+  const [analyticMeasurements, setAnalyticMeasurements] = React.useState<
+    AnalyticMeasurement[]
+  >([]);
+  const [statisticalMeasurements, setStatisticalMeasurements] = React.useState<
+    StatisticalMeasurement[]
+  >([]);
+  const [measurements, setMeasurements] = React.useState<ApexAxisChartSeries>(
+    []
+  );
+  const [distributions, setDistributions] = React.useState<ApexAxisChartSeries>(
+    []
+  );
+  const [granularity, setGranularity] = React.useState<string>("DAYS");
+  const [selectedMeter, setSelectedMeter] = React.useState<string>("");
+  const [selectedVariables, setSelectedVariables] = React.useState<string>("");
+  async function handleMeasurements(
+    selectedMeterValue: string,
+    selectedVariableValues: string,
+    startDate: Date | string,
+    endDate: Date | string,
+    newGranularity: string
+  ) {
+    const params = new URLSearchParams({
+      meterID: selectedMeterValue,
+      variables: selectedVariableValues,
+      granularity: newGranularity || granularity,
+      grouping: true.toString(),
+    });
+    setGranularity(newGranularity);
+    setSelectedMeter(selectedMeterValue);
+    setSelectedVariables(selectedVariableValues);
+    if (startDate) {
+      params.append("startDate", new Date(startDate).toISOString());
+    }
+    if (endDate) {
+      params.append("endDate", new Date(endDate).toISOString());
+    }
 
-    const analyticMeasures: AnalyticMeasurement[] = filteredMeasurements.reduce(function (
-      filtered: AnalyticMeasurement[],
-      meas
-    ) {
-      if (meas.measurements) {
-        meas.measurements.forEach((m) => {
-          var data = {
-            variableName: meas.variableName,
-            variableUnit: meas.variableUnit,
-            instant: new Date(m.instant).toLocaleString(),
-            value: parseFloat(m.value)?.toFixed(3),
-          };
-          filtered.push(data);
-      });
-      }
-      return filtered;
-    },
-    []);
+    const url = `${getPublicBaseUrl()}/measurement?`;
+    const resp = await fetch(url + params.toString(), {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (resp.ok) {
+      const measurements: Measurements[] = await resp.json();
+      setDistributions(mapMeasurementsDistributions(measurements));
+      setMeasurements(mapMeasurements(measurements));
+      setAnalyticMeasurements(mapAnalyticMeasurements(measurements));
+      setStatisticalMeasurements(mapStatisticalMeasurements(measurements));
+    } else {
+      const { message } = await resp.json();
+      toast.error(message);
+    }
+  }
 
-    const statisticalMeasures: StatisticalMeasurement[] = filteredMeasurements.reduce(function (
-      filtered: StatisticalMeasurement[],
-      meas
-    ) {
-      if (meas.statistics) {
-        var data = {
-          name: meas.variableName,
-          avg: parseFloat(meas.statistics.avg).toFixed(3),
-          max: parseFloat(meas.statistics.max).toFixed(3),
-          median: parseFloat(meas.statistics.median).toFixed(3),
-          min: parseFloat(meas.statistics.min).toFixed(3),
-          mode: parseFloat(meas.statistics.mode).toFixed(3),
-          std: parseFloat(meas.statistics.std).toFixed(3),
-        }
-        filtered.push(data);
-      }
-      return filtered;
-    },
-    []);
-
-    //console.log(filteredMeasurements)
-    setAnalyticMeasurements(analyticMeasures);
-    //setAnalyticMeasurements([{variableName:'Var1', instant: '123', value : '123', variableUnit : 'unit1'}])
-    //setStatisticalMeasurements([{avg: 1, max: 2, median : 3, min : 4, mode : 3, std : 4}])
-    setStatisticalMeasurements(statisticalMeasures)
-    setMeasurements(measures);
-
-
-    //
+  function handleMeasurementSelection({
+    x,
+    y,
+    newGranularity,
+  }: {
+    x: Date;
+    y: number;
+    newGranularity: string;
+  }) {
+    let startPickedDate = new Date(x);
+    let endPickedDate = new Date(x);
+    switch (newGranularity) {
+      case "MONTH":
+        startPickedDate = new Date(x.getFullYear(), 0, 1);
+        endPickedDate = new Date(x.getFullYear(), 11, 31);
+        break;
+      case "DAYS":
+        startPickedDate = new Date(x.getFullYear(), x.getMonth(), 1);
+        endPickedDate = new Date(x.getFullYear(), x.getMonth() + 1, 0);
+        break;
+      case "HOURS":
+        startPickedDate.setUTCHours(0, 0, 0, 0);
+        endPickedDate.setUTCHours(23, 59, 59, 999);
+        break;
+      case "MINUTES":
+        startPickedDate.setUTCMinutes(0, 0, 0);
+        endPickedDate.setUTCMinutes(59, 59, 999);
+        break;
+    }
+    handleMeasurements(
+      selectedMeter,
+      selectedVariables,
+      startPickedDate,
+      endPickedDate,
+      newGranularity
+    );
   }
   return (
     <Box css={{ overflow: "hidden", height: "100%" }}>
@@ -142,52 +158,115 @@ export const DashboardAnaliseMedidor = ({
           }}
           direction={"column"}
         >
-          {/* Card Section Top */}
           <DashFilter
             meters={meters}
             variables={variables}
             handleMeasurements={handleMeasurements}
           />
-
-          {/* Chart */}
-          <Box>
-            <Text
-              h3
-              css={{
-                textAlign: "center",
-                "@lg": {
-                  textAlign: "inherit",
-                },
-              }}
-            >
-              Medições
-            </Text>
-            <Box
-              css={{
-                width: "100%",
-                backgroundColor: "$accents0",
-                boxShadow: "$lg",
-                borderRadius: "$2xl",
-                px: "$10",
-                py: "$10",
-              }}
-            >
-              <Chart series={measurements} />
-            </Box>
-            
-          </Box>
-          <TabelaAnalitica 
-            key = {analyticMeasurements.length}
-            analyticMeasurements={analyticMeasurements}
-          />       
-          <TabelaEstatisticas
-          key = {statisticalMeasurements.length}
-          analyticMeasurements = {statisticalMeasurements}
-          />
-
-    
+          <Grid.Container gap={2} justify="center">
+            <Grid lg={9} md={12}>
+              <GraficoMedicoes
+                granularity={granularity}
+                measurements={measurements}
+                handleMeasurementSelection={handleMeasurementSelection}
+              />
+            </Grid>
+            <Grid lg={3} md={12}>
+              <NormalDistribution distributions={distributions} />
+            </Grid>
+            <Grid lg={9} md={12}>
+              <TabelaAnalitica
+                key={analyticMeasurements.length}
+                analyticMeasurements={analyticMeasurements}
+              />
+            </Grid>
+            <Grid lg={3} md={12}>
+              <TabelaEstatisticas
+                key={statisticalMeasurements.length}
+                statisticalMeasurements={statisticalMeasurements}
+              />
+            </Grid>
+          </Grid.Container>
         </Flex>
       </Flex>
     </Box>
   );
 };
+
+function mapMeasurements(measurements: Measurements[]): ApexAxisChartSeries {
+  return measurements.reduce(function (filtered: ApexAxisChartSeries, meas) {
+    if (meas.measurements) {
+      var data = {
+        name: meas.variableName,
+        data: meas.measurements.map((m) => ({
+          x: new Date(m.instant),
+          y: parseFloat(m.value)?.toFixed(3),
+        })),
+        suffix: meas.variableUnit,
+      };
+      filtered.push(data);
+    }
+    return filtered;
+  }, []);
+}
+
+function mapAnalyticMeasurements(
+  measurements: Measurements[]
+): AnalyticMeasurement[] {
+  return measurements.reduce(function (filtered: AnalyticMeasurement[], meas) {
+    if (meas.measurements) {
+      meas.measurements.forEach((m) => {
+        var data = {
+          variableName: meas.variableName,
+          variableUnit: meas.variableUnit,
+          instant: new Date(m.instant).toLocaleString(),
+          value: parseFloat(m.value)?.toFixed(3),
+        };
+        filtered.push(data);
+      });
+    }
+    return filtered;
+  }, []);
+}
+
+function mapStatisticalMeasurements(
+  measurements: Measurements[]
+): StatisticalMeasurement[] {
+  return measurements.reduce(function (
+    filtered: StatisticalMeasurement[],
+    meas
+  ) {
+    if (meas.statistics) {
+      var data = {
+        name: meas.variableName,
+        avg: meas.statistics.avg.toFixed(3),
+        max: meas.statistics.max.toFixed(3),
+        median: meas.statistics.median.toFixed(3),
+        min: meas.statistics.min.toFixed(3),
+        mode: meas.statistics.mode.toFixed(3),
+        std: meas.statistics.std.toFixed(3),
+      };
+      filtered.push(data);
+    }
+    return filtered;
+  },
+  []);
+}
+
+function mapMeasurementsDistributions(
+  measurements: Measurements[]
+): ApexAxisChartSeries {
+  return measurements.reduce(function (filtered: ApexAxisChartSeries, meas) {
+    if (meas?.statistics?.normalDistribution) {
+      var data = {
+        name: meas.variableName,
+        data: meas.statistics.normalDistribution.map((m) => ({
+          x: m.x?.toFixed(3),
+          y: m.y,
+        })),
+      };
+      filtered.push(data);
+    }
+    return filtered;
+  }, []);
+}
