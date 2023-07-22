@@ -37,6 +37,7 @@ export const DashboardAnaliseMedidor = ({
       meterID: selectedMeterValue,
       variables: selectedVariableValues,
       granularity: newGranularity || granularity,
+      grouping: true.toString(),
     });
     setGranularity(newGranularity);
     setSelectedMeter(selectedMeterValue);
