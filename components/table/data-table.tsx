@@ -57,9 +57,10 @@ export const DataTable = ({
           )}
         </Table.Header>
         <Table.Body items={data}>
-          {(item) => (
-            <Table.Row>
-              {(columnKey) => (
+          {data.map((item,index) => {
+            return (
+              <Table.Row key={index}>
+                {(columnKey) => (
                 <Table.Cell>
                   {RenderCell({
                     item,
@@ -69,7 +70,7 @@ export const DataTable = ({
                 </Table.Cell>
               )}
             </Table.Row>
-          )}
+          )})}
         </Table.Body>
         {showPagination && <Table.Pagination
           shadow

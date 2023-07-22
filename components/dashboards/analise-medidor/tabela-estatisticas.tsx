@@ -11,41 +11,27 @@ import { Card } from "@nextui-org/react";
 import { DataTable } from "@/components/table/data-table";
 import { Carousel } from 'react-responsive-carousel';
 
-type StatisticsCarouselProps  = {
-    variables: Variable[];
-    meters: Meter[];
-    handleMeasurements: (measurements: any) => void;
-    measurements: Measurements[];
-  };
+export type StatisticalMeasurement = {
+  avg: number;
+  max?: number;
+  median?: number;
+  min?: number;
+  mode?: number;
+  std?: number;
+};
 
-export const TabelaEstatisticas: React.FC<StatisticsCarouselProps> = ({
-    variables,
-    meters,
-    handleMeasurements,
+type Props = {
+  statisticalMeasurements: StatisticalMeasurement[];
+};
 
-  }: StatisticsCarouselProps ) => {
 
-    const [selectedMeter, setSelectedMeter] = React.useState<Set<Key>>(new Set([]));
+export const TabelaEstatisticas = ({
+  statisticalMeasurements
+
+  }: Props ) => {
+
+   
     const [loading, setLoading] = React.useState(false);
-    const [startDate, setStartDate] = React.useState();
-    const [endDate, setEndDate] = React.useState();
-    const selectedMeterValue = React.useMemo(
-      () => Array.from(selectedMeter).join(",").replaceAll("_", " "),
-      [selectedMeter]
-    );
-    const [selectedVariable, setSelectedVariable] = React.useState<Set<Key>>(new Set([]));
-    const selectedVariableValues = React.useMemo(
-      () => Array.from(selectedVariable).join(",").replaceAll("_", " "),
-      [selectedVariable]
-    );
-    
-    const [measurements, setMeasurements] = React.useState<Measurements[]>([]);
-    React.useEffect(() => {
-        handleMeasurements(measurements)
-
-      }, [selectedMeterValue, selectedVariableValues]);
-
-
 
     const columns: TableColumn[] = [
       { name: "Min", uid: "min" },
@@ -58,32 +44,42 @@ export const TabelaEstatisticas: React.FC<StatisticsCarouselProps> = ({
 
 return (
     <Carousel>
-    <Card
-        css={{
-        borderRadius: "$xl",
-        px: "$6",
-        height: "500px",
-        }}
-    >
-        <Card.Header>
-        <Text h4 css={{ textAlign: "center", width: "100%" }}>
-        Estatisticas Descritivas
-        </Text>
-        </Card.Header>
-        <Card.Body>
-        {loading ? (
-            <Loading color="white" size="xl" />
+      <Card
+          css={{
+          borderRadius: "$xl",
+          px: "$6",
+          height: "500px",
+          }}
+      >
+          <Card.Header>
+          <Text h4 css={{ textAlign: "center", width: "100%" }}>
+          Estatisticas Descritivas
+          </Text>
+          </Card.Header>
+          <Card.Body>
+        {(statisticalMeasurements.length === 0) ? (
+          <Text
+            h4
+            css={{
+              textAlign: "center",
+              "@lg": {
+                textAlign: "center",
+              },
+            }}
+          >
+          Selecione um Medidor e uma Variável!
+          </Text>
         ) : (
             <DataTable
             selectionMode="none"
-            ariaLabel="Estatisticas Descritivas"
+            ariaLabel="Tabela de dados estatísticos"
             columns={columns}
-            data={measurements} 
+            data={statisticalMeasurements} 
             showPagination={true}
             />
         )}
         </Card.Body>
-    </Card>
+      </Card>
     </Carousel>
     );
 };

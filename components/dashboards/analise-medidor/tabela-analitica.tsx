@@ -11,41 +11,24 @@ import { Card } from "@nextui-org/react";
 import { DataTable } from "@/components/table/data-table";
 import { CSVLink } from 'react-csv';
 
+export type AnalyticMeasurement = {
+  variableName: string;
+  instant?: number;
+  value?: string;
+  variableUnit?: string;
+};
+
+
 type Props = {
-    variables: Variable[];
-    meters: Meter[];
-    handleMeasurements: (measurements: any) => void;
-    measurements: Measurements[];
+    analyticMeasurements: AnalyticMeasurement[];
   };
 
+
 export const TabelaAnalitica = ({
-    variables,
-    meters,
-    handleMeasurements,
+  analyticMeasurements
 
   }: Props) => {
-
-    const [selectedMeter, setSelectedMeter] = React.useState<Set<Key>>(new Set([]));
     const [loading, setLoading] = React.useState(false);
-    const [startDate, setStartDate] = React.useState();
-    const [endDate, setEndDate] = React.useState();
-    const selectedMeterValue = React.useMemo(
-      () => Array.from(selectedMeter).join(",").replaceAll("_", " "),
-      [selectedMeter]
-    );
-    const [selectedVariable, setSelectedVariable] = React.useState<Set<Key>>(new Set([]));
-    const selectedVariableValues = React.useMemo(
-      () => Array.from(selectedVariable).join(",").replaceAll("_", " "),
-      [selectedVariable]
-    );
-    
-    const [measurements, setMeasurements] = React.useState<Measurements[]>([]);
-    React.useEffect(() => {
-        handleMeasurements(measurements)
-
-      }, [selectedMeterValue, selectedVariableValues]);
-
-
 
     const columns: TableColumn[] = [
       { name: "Variável", uid: "variableName" },
@@ -66,19 +49,33 @@ return (
         <Text h4 css={{ textAlign: "center", width: "100%" }}>
             Dados Analiticos
         </Text>
-        <CSVLink data={measurements} headers={columns}>
-            <button>Download CSV</button>
+        <CSVLink
+        key = {analyticMeasurements.length} 
+        data={analyticMeasurements} 
+        filename={"meter_data.csv"}>
+            <Button>Download CSV</Button>
         </CSVLink>
+
         </Card.Header>
         <Card.Body>
-        {loading ? (
-            <Loading color="white" size="xl" />
+        {(analyticMeasurements.length === 0) ? (
+          <Text
+            h4
+            css={{
+              textAlign: "center",
+              "@lg": {
+                textAlign: "center",
+              },
+            }}
+          >
+           Selecione um Medidor e uma Variável!
+          </Text>
         ) : (
             <DataTable
             selectionMode="none"
             ariaLabel="Tabela de dados analiticos"
             columns={columns}
-            data={measurements} 
+            data={analyticMeasurements} 
             showPagination={true}
             />
         )}
@@ -88,3 +85,4 @@ return (
     </Card>
     );
 };
+
