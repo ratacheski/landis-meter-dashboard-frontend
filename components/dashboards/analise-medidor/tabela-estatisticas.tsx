@@ -1,32 +1,16 @@
 import { DataTable } from "@/components/table/data-table";
-import { Card, Text } from "@nextui-org/react";
+import { Card, Spacer, Text } from "@nextui-org/react";
 import { TableColumn } from "@/components/table/data-table.interface";
 import React from "react";
 import { Carousel } from "react-responsive-carousel";
 import { Flex } from "@/components/styles/flex";
-export type StatisticalMeasurement = {
-  avg: number;
-  max?: number;
-  median?: number;
-  min?: number;
-  mode?: number;
-  std?: number;
-};
+import { StatisticalMeasurement } from "@/shared/utils/types";
 
 type Props = {
   statisticalMeasurements: StatisticalMeasurement[];
 };
 
 export const TabelaEstatisticas = ({ statisticalMeasurements }: Props) => {
-  const columns: TableColumn[] = [
-    { name: "Min", uid: "min" },
-    { name: "Máx", uid: "max" },
-    { name: "Média", uid: "avg" },
-    { name: "Desvio Padrão", uid: "std" },
-    { name: "Mediana", uid: "median" },
-    { name: "Moda", uid: "mode" },
-  ];
-
   return (
     <Card>
       <Card.Header>
@@ -43,24 +27,74 @@ export const TabelaEstatisticas = ({ statisticalMeasurements }: Props) => {
         </Text>
       </Card.Header>
       <Card.Body>
-        <Carousel
-          autoPlay
-          infiniteLoop
-          showStatus={false}
-          showArrows={false}
-        >
-          {statisticalMeasurements.map((statistical, index) => {
+        <Carousel autoPlay infiniteLoop showStatus={false} showArrows={false}>
+          {statisticalMeasurements.map((statistical) => {
             return (
-              <Flex key={statistical.name} direction="column">
-                <div key={index}>
-                  <Text h3>{statistical.name}</Text>
-                  <Text p>Min: {statistical.min}</Text>
-                  <Text p>Máx: {statistical.max}</Text>
-                  <Text p>Média: {statistical.avg}</Text>
-                  <Text p>Desvio Padrão: {statistical.std}</Text>
-                  <Text p>Mediana: {statistical.median}</Text>
-                  <Text p>Moda: {statistical.mode}</Text>
-                </div>
+              <Flex
+                key={statistical.name}
+                align="center"
+                direction="column"
+                css={{
+                  height: "330px",
+                }}
+              >
+                <Text h3>{statistical.name}</Text>
+                <Flex
+                  align={"between"}
+                >
+                  <Text h5 weight={"extrabold"}>
+                    Min:
+                  </Text>
+                  <Spacer />
+                  <Text h6>
+                    {statistical.min} {statistical.unit}
+                  </Text>
+                </Flex>
+                <Flex align={"end"}>
+                  <Text h5 weight={"extrabold"}>
+                    Máx:
+                  </Text>
+                  <Spacer />
+                  <Text h6>
+                    {statistical.max} {statistical.unit}
+                  </Text>
+                </Flex>
+                <Flex align={"end"}>
+                  <Text h5 weight={"extrabold"}>
+                    Média:
+                  </Text>
+                  <Spacer />
+                  <Text h6>
+                    {statistical.avg} {statistical.unit}
+                  </Text>
+                </Flex>
+                <Flex align={"end"}>
+                  <Text h5 weight={"extrabold"}>
+                    Desvio Padrão:
+                  </Text>
+                  <Spacer />
+                  <Text h6>
+                    {statistical.std} {statistical.unit}
+                  </Text>
+                </Flex>
+                <Flex align={"end"}>
+                  <Text h5 weight={"extrabold"}>
+                    Mediana:
+                  </Text>
+                  <Spacer />
+                  <Text h6>
+                    {statistical.median} {statistical.unit}
+                  </Text>
+                </Flex>
+                <Flex align={"end"}>
+                  <Text h5 weight={"extrabold"}>
+                    Moda:
+                  </Text>
+                  <Spacer />
+                  <Text h6>
+                    {statistical.mode} {statistical.unit}
+                  </Text>
+                </Flex>
               </Flex>
             );
           })}
@@ -69,11 +103,6 @@ export const TabelaEstatisticas = ({ statisticalMeasurements }: Props) => {
     </Card>
   );
 };
-
-
-
-
-
 
 //
 //<Card.Body>

@@ -92,6 +92,8 @@ export default function NormalDistribution({
       </Card.Header>
       <Card.Body>
         <Carousel
+          key="normal-distribution"
+          ariaLabel="normal-distribution"
           autoPlay
           infiniteLoop
           showStatus={false}

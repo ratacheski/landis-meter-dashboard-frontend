@@ -1,7 +1,7 @@
 import { Box } from "@/components/styles/box";
 import { Flex } from "@/components/styles/flex";
 import { getPublicBaseUrl } from "@/shared/utils/apiUtil";
-import { Measurements, Meter, Variable } from "@/shared/utils/types";
+import { Measurements, Meter, StatisticalMeasurement, Variable } from "@/shared/utils/types";
 import { Grid } from "@nextui-org/react";
 import React from "react";
 import { toast } from "react-toastify";
@@ -16,15 +16,6 @@ export type AnalyticMeasurement = {
   instant?: number;
   value?: string;
   variableUnit?: string;
-};
-
-export type StatisticalMeasurement = {
-  avg: number;
-  max?: number;
-  median?: number;
-  min?: number;
-  mode?: number;
-  std?: number;
 };
 
 type DashboardAnaliseMedidorProps = {
@@ -238,6 +229,7 @@ function mapStatisticalMeasurements(
     if (meas.statistics) {
       var data = {
         name: meas.variableName,
+        unit: meas.variableUnit,
         avg: meas.statistics.avg.toFixed(3),
         max: meas.statistics.max.toFixed(3),
         median: meas.statistics.median.toFixed(3),

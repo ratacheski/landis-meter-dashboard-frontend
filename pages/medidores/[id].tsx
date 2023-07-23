@@ -1,9 +1,7 @@
-import React from 'react'
-import {GetServerSideProps, InferGetServerSidePropsType} from "next";
-import {MedidorEdicao} from "@/components/medidores/medidor-edicao";
-import { ToastContainer, toast } from 'react-toastify';
-import {getBaseUrl} from "@/shared/utils/apiUtil";
-import { Meter  } from '@/shared/utils/types';
+import { MedidorEdicao } from "@/components/medidores/medidor-edicao";
+import { getBaseUrl } from "@/shared/utils/apiUtil";
+import { Meter, Variable } from "@/shared/utils/types";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 
 export default function medidorForm({
   meter,
@@ -13,12 +11,15 @@ export default function medidorForm({
 
 export const getServerSideProps: GetServerSideProps<{
   meter: Meter;
+  variables: Variable[];
 }> = async (context) => {
   let meter: Meter = {};
-  
-  if (context.params?.id !== 'novo') {
+  const res = await fetch(`${getBaseUrl()}/variable`);
+  const variables = await res.json();
+  if (context.params?.id !== "novo") {
     const res = await fetch(`${getBaseUrl()}/meter/${context.params?.id}`);
     meter = await res.json();
   }
-  return { props: { meter } };
+
+  return { props: { meter, variables } };
 };
