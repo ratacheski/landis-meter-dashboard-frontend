@@ -51,6 +51,10 @@ export const DashFilter = ({
     });
     if (resp.ok) {
       const meters: Meter[] = await resp.json();
+      if (meters.length === 0){
+        toast.warn("Não foram encontrados medidores com o termo pesquisado!");
+        return;
+      }
       setMeters(meters);
     } else {
       const { message } = await resp.json();
