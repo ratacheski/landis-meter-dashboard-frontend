@@ -1,9 +1,9 @@
 export type Variable = {
-  id?: string;
-  code?: string;
-  name?: string;
-  acronym?: string;
-  unit?: string;
+  id: string;
+  code: string;
+  name: string;
+  acronym: string;
+  unit: string;
 };
 
 export type Meter = {

@@ -5,8 +5,9 @@ import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 
 export default function medidorForm({
   meter,
+  variables,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  return <MedidorEdicao meter={meter} />;
+  return <MedidorEdicao meter={meter} variables={variables} />;
 }
 
 export const getServerSideProps: GetServerSideProps<{

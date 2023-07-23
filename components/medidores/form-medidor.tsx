@@ -8,6 +8,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { Meter, Variable } from "@/shared/utils/types";
 import "react-toastify/dist/ReactToastify.css";
 import MapComponent from "./map-component";
+import SelecaoVariaveis from "./selecao-variaveis";
 
 type MedidoresProps = {
   meter: Meter;
@@ -24,7 +25,7 @@ type FormItems = {
   readOnly?: boolean;
 };
 
-export const FormMeter = ({ meter,variables }: MedidoresProps) => {
+export const FormMeter = ({ meter, variables }: MedidoresProps) => {
   const [userLocation, setUserLocation] = useState<{
     latitude: number;
     longitude: number;
@@ -60,7 +61,7 @@ export const FormMeter = ({ meter,variables }: MedidoresProps) => {
       reset(meter);
     }
   }, [meter, reset, userLocation]);
-  
+
   const formItems: FormItems[] = [
     {
       property: "name",
@@ -96,6 +97,9 @@ export const FormMeter = ({ meter,variables }: MedidoresProps) => {
     },
   ];
 
+  const handleSelection = (variables: Variable[]) => {
+    meter.variables = variables;
+  };
 
   const onSubmit = handleSubmit(async (data: Meter) => {
     const url = `${getPublicBaseUrl()}/meter${meter.id ? `/${meter.id}` : ""}`;
@@ -106,7 +110,7 @@ export const FormMeter = ({ meter,variables }: MedidoresProps) => {
         Accept: "application/json",
         "Content-Type": "application/json;charset=UTF-8",
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify({ ...data, variables: meter.variables }),
     });
 
     if (response.ok) {
@@ -188,7 +192,22 @@ export const FormMeter = ({ meter,variables }: MedidoresProps) => {
           }
         )}
       </Grid.Container>
-      <MapComponent meter={getValues()} onDragHandler={dragHandler}/>
+      <Grid.Container gap={2} alignItems={"flex-start"}>
+        <Grid md={4} key="variables">
+          <SelecaoVariaveis
+            variables={variables}
+            defaultVariables={meter.variables}
+            handleSelection={handleSelection}
+          />
+        </Grid>
+        <Grid md={8} key="map">
+          <MapComponent
+            meter={getValues()}
+            onDragHandler={dragHandler}
+            height="400px"
+          />
+        </Grid>
+      </Grid.Container>
     </form>
   );
 };
