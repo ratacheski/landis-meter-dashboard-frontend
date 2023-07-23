@@ -3,6 +3,7 @@ import { Card, Text } from "@nextui-org/react";
 import { TableColumn } from "@/components/table/data-table.interface";
 import React from "react";
 import { Carousel } from "react-responsive-carousel";
+import { Flex } from "@/components/styles/flex";
 export type StatisticalMeasurement = {
   avg: number;
   max?: number;
@@ -27,20 +28,12 @@ export const TabelaEstatisticas = ({ statisticalMeasurements }: Props) => {
   ];
 
   return (
-    <Card
-      css={{
-        width: "100%",
-        borderRadius: "$xl",
-        px: "$6",
-        height: "500px",
-      }}
-    >
+    <Card>
       <Card.Header>
         <Text
           h3
           css={{
             textAlign: "center",
-            width: "100%",
             "@lg": {
               textAlign: "inherit",
             },
@@ -55,18 +48,20 @@ export const TabelaEstatisticas = ({ statisticalMeasurements }: Props) => {
           infiniteLoop
           showStatus={false}
           showArrows={false}
-          width="100%"
         >
           {statisticalMeasurements.map((statistical, index) => {
             return (
-              <DataTable
-                key={index}
-                selectionMode="none"
-                ariaLabel="Tabela de dados estatísticos"
-                columns={columns}
-                data={[statistical]}
-                showPagination={true}
-              />
+              <Flex key={statistical.name} direction="column">
+                <div key={index}>
+                  <Text h3>{statistical.name}</Text>
+                  <Text p>Min: {statistical.min}</Text>
+                  <Text p>Máx: {statistical.max}</Text>
+                  <Text p>Média: {statistical.avg}</Text>
+                  <Text p>Desvio Padrão: {statistical.std}</Text>
+                  <Text p>Mediana: {statistical.median}</Text>
+                  <Text p>Moda: {statistical.mode}</Text>
+                </div>
+              </Flex>
             );
           })}
         </Carousel>
@@ -74,3 +69,46 @@ export const TabelaEstatisticas = ({ statisticalMeasurements }: Props) => {
     </Card>
   );
 };
+
+
+
+
+
+
+//
+//<Card.Body>
+//<Carousel
+//  autoPlay
+//  infiniteLoop
+//  showStatus={false}
+//  showArrows={false}
+//>
+//  {distributions.map((distribution, index) => {
+//    return (
+//      <Flex key={distribution.name} direction="column">
+//        <Text
+//          h3
+//          css={{
+//            width: "100%",
+//            textAlign: "center",
+//            "@lg": {
+//              textAlign: "center",
+//            },
+//          }}
+//        >
+//          {distribution.name}
+//        </Text>
+//        <Chart
+//          series={[distribution]}
+//          options={{
+//            ...distributionChartOptions,
+//            colors: [distributionColors[index]],
+//          }}
+//          type="line"
+//          height={250}
+//        />
+//      </Flex>
+//    );
+//  })}
+//</Carousel>
+//</Card.Body>
