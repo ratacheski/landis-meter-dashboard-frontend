@@ -1,13 +1,22 @@
 import { Box } from "@/components/styles/box";
 import { Flex } from "@/components/styles/flex";
 import { getPublicBaseUrl } from "@/shared/utils/apiUtil";
-import { Measurements, Meter, Variable } from "@/shared/utils/types";
+import { Measurements, Meter, StatisticalMeasurement, Variable } from "@/shared/utils/types";
 import { Grid } from "@nextui-org/react";
 import React from "react";
 import { toast } from "react-toastify";
 import { DashFilter } from "./dash-filter";
+import { TabelaAnalitica } from "./tabela-analitica";
+import { TabelaEstatisticas } from "./tabela-estatisticas";
 import GraficoMedicoes from "./grafico-medicoes";
 import NormalDistribution from "./normal-distribution";
+
+export type AnalyticMeasurement = {
+  variableName: string;
+  instant?: number;
+  value?: string;
+  variableUnit?: string;
+};
 
 type DashboardAnaliseMedidorProps = {
   variables: Variable[];
@@ -17,6 +26,12 @@ export const DashboardAnaliseMedidor = ({
   variables,
   meters,
 }: DashboardAnaliseMedidorProps) => {
+  const [analyticMeasurements, setAnalyticMeasurements] = React.useState<
+    AnalyticMeasurement[]
+  >([]);
+  const [statisticalMeasurements, setStatisticalMeasurements] = React.useState<
+    StatisticalMeasurement[]
+  >([]);
   const [measurements, setMeasurements] = React.useState<ApexAxisChartSeries>(
     []
   );
@@ -60,6 +75,8 @@ export const DashboardAnaliseMedidor = ({
       const measurements: Measurements[] = await resp.json();
       setDistributions(mapMeasurementsDistributions(measurements));
       setMeasurements(mapMeasurements(measurements));
+      setAnalyticMeasurements(mapAnalyticMeasurements(measurements));
+      setStatisticalMeasurements(mapStatisticalMeasurements(measurements));
     } else {
       const { message } = await resp.json();
       toast.error(message);
@@ -147,6 +164,18 @@ export const DashboardAnaliseMedidor = ({
             <Grid lg={3} md={12}>
               <NormalDistribution distributions={distributions} />
             </Grid>
+            <Grid lg={9} md={12}>
+              <TabelaAnalitica
+                key={analyticMeasurements.length}
+                analyticMeasurements={analyticMeasurements}
+              />
+            </Grid>
+            <Grid lg={3} md={12}>
+              <TabelaEstatisticas
+                key={statisticalMeasurements.length}
+                statisticalMeasurements={statisticalMeasurements}
+              />
+            </Grid>
           </Grid.Container>
         </Flex>
       </Flex>
@@ -155,10 +184,7 @@ export const DashboardAnaliseMedidor = ({
 };
 
 function mapMeasurements(measurements: Measurements[]): ApexAxisChartSeries {
-  return measurements.reduce(function (
-    filtered: ApexAxisChartSeries,
-    meas
-  ) {
+  return measurements.reduce(function (filtered: ApexAxisChartSeries, meas) {
     if (meas.measurements) {
       var data = {
         name: meas.variableName,
@@ -171,11 +197,56 @@ function mapMeasurements(measurements: Measurements[]): ApexAxisChartSeries {
       filtered.push(data);
     }
     return filtered;
-  },
-    []);
+  }, []);
 }
 
-function mapMeasurementsDistributions(measurements: Measurements[]): ApexAxisChartSeries {
+function mapAnalyticMeasurements(
+  measurements: Measurements[]
+): AnalyticMeasurement[] {
+  return measurements.reduce(function (filtered: AnalyticMeasurement[], meas) {
+    if (meas.measurements) {
+      meas.measurements.forEach((m) => {
+        var data = {
+          variableName: meas.variableName,
+          variableUnit: meas.variableUnit,
+          instant: new Date(m.instant).toLocaleString(),
+          value: parseFloat(m.value)?.toFixed(3),
+        };
+        filtered.push(data);
+      });
+    }
+    return filtered;
+  }, []);
+}
+
+function mapStatisticalMeasurements(
+  measurements: Measurements[]
+): StatisticalMeasurement[] {
+  return measurements.reduce(function (
+    filtered: StatisticalMeasurement[],
+    meas
+  ) {
+    if (meas.statistics) {
+      var data = {
+        name: meas.variableName,
+        unit: meas.variableUnit,
+        avg: meas.statistics.avg.toFixed(3),
+        max: meas.statistics.max.toFixed(3),
+        median: meas.statistics.median.toFixed(3),
+        min: meas.statistics.min.toFixed(3),
+        mode: meas.statistics.mode.toFixed(3),
+        std: meas.statistics.std.toFixed(3),
+      };
+      filtered.push(data);
+    }
+    return filtered;
+  },
+  []);
+}
+
+function mapMeasurementsDistributions(
+  measurements: Measurements[]
+): ApexAxisChartSeries {
   return measurements.reduce(function (filtered: ApexAxisChartSeries, meas) {
     if (meas?.statistics?.normalDistribution) {
       var data = {

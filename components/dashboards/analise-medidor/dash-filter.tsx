@@ -22,6 +22,7 @@ export const DashFilter = ({
   variables,
   meters,
   handleMeasurements,
+  measurements,
 }: Props) => {
   const [selectedMeter, setSelectedMeter] = React.useState<Set<Key>>(
     new Set([])

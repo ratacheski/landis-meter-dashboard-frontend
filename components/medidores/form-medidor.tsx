@@ -5,12 +5,13 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import { getPublicBaseUrl } from "@/shared/utils/apiUtil";
 import { ToastContainer, toast } from "react-toastify";
-import { Meter } from "@/shared/utils/types";
+import { Meter, Variable } from "@/shared/utils/types";
 import "react-toastify/dist/ReactToastify.css";
 import MapComponent from "./map-component";
 
 type MedidoresProps = {
   meter: Meter;
+  variables: Variable[];
 };
 
 type FormItems = {
@@ -23,7 +24,7 @@ type FormItems = {
   readOnly?: boolean;
 };
 
-export const FormMeter = ({ meter }: MedidoresProps) => {
+export const FormMeter = ({ meter,variables }: MedidoresProps) => {
   const [userLocation, setUserLocation] = useState<{
     latitude: number;
     longitude: number;
