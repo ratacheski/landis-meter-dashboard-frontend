@@ -53,13 +53,15 @@ export const TabelaAnalitica = ({ analyticMeasurements }: Props) => {
         >
           Dados Analiticos
         </Text>
-        <CSVLink
-          key={analyticMeasurements.length}
-          data={analyticMeasurements}
-          filename={"meter_data.csv"}
-        >
-          <Button>Download CSV</Button>
-        </CSVLink>
+        {analyticMeasurements.length > 0 && (
+          <CSVLink
+            key={analyticMeasurements.length}
+            data={analyticMeasurements}
+            filename={"meter_data.csv"}
+          >
+            <Button>Download CSV</Button>
+          </CSVLink>
+        )}
       </Card.Header>
       <Card.Body>
         {analyticMeasurements.length === 0 ? (

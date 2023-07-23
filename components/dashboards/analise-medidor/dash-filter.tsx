@@ -1,72 +1,80 @@
 import { Box } from "@/components/styles/box";
 import { Flex } from "@/components/styles/flex";
-import { Meter, Variable } from "@/shared/utils/types";
-import { Button, Dropdown, Input, Loading, Text } from "@nextui-org/react";
+import { getPublicBaseUrl } from "@/shared/utils/apiUtil";
+import { Meter } from "@/shared/utils/types";
+import {
+  Button,
+  Dropdown,
+  Input,
+  Loading,
+  Popover,
+  Text,
+} from "@nextui-org/react";
 import React, { Key } from "react";
 import { Search } from "react-iconly";
 import { toast } from "react-toastify";
 
 type Props = {
-  variables: Variable[];
-  meters: Meter[];
   handleMeasurements: (
-    selectedMeterValue: string,
-    selectedVariableValues: string,
     startDate: string,
     endDate: string,
     newGranularity: string
   ) => void;
+  handleMeterSelection: (meter: Meter) => void;
 };
 
 export const DashFilter = ({
-  variables,
-  meters,
   handleMeasurements,
-  measurements,
+  handleMeterSelection,
 }: Props) => {
   const [selectedMeter, setSelectedMeter] = React.useState<Set<Key>>(
     new Set([])
   );
   const [loading, setLoading] = React.useState(false);
-  const [startDate, setStartDate] = React.useState<string>('');
-  const [endDate, setEndDate] = React.useState<string>('');
-  const selectedMeterValue = React.useMemo(
-    () => Array.from(selectedMeter).join(",").replaceAll("_", " "),
-    [selectedMeter]
-  );
-  const [selectedVariable, setSelectedVariable] = React.useState<Set<Key>>(
-    new Set([])
-  );
-  const selectedVariableValues = React.useMemo(
-    () => Array.from(selectedVariable).join(",").replaceAll("_", " "),
-    [selectedVariable]
-  );
+  const [startDate, setStartDate] = React.useState<string>("");
+  const [endDate, setEndDate] = React.useState<string>("");
+  const [meters, setMeters] = React.useState<Meter[]>([]);
+  var typingTimer: NodeJS.Timeout;
+  var doneTypingInterval = 1000;
 
+  async function searchMeters(searchText: string) {
+    if (searchText.length < 3) {
+      toast.error("Digite pelo menos 3 caracteres!");
+      return;
+    }
+    const url = `${getPublicBaseUrl()}/meter/name/${searchText}`;
+    const resp = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (resp.ok) {
+      const meters: Meter[] = await resp.json();
+      setMeters(meters);
+    } else {
+      const { message } = await resp.json();
+      toast.error(message);
+    }
+  }
+  function onMeterSelection(selected: "all" | Set<Key>) {
+    meters.filter((meter) => {
+      if (meter.id === Array.from(selected)[0]) {
+        handleMeterSelection(meter);
+      }
+    });
+    setSelectedMeter(selected);
+  }
   async function handleSearch() {
-    if (!selectedMeterValue) {
+    console.log(selectedMeter);
+    
+    if (selectedMeter.size === 0) {
       toast.error("Selecione um medidor!");
       return;
     }
-    if (!selectedVariableValues) {
-      toast.error("Selecione uma variável!");
-      return;
-    }
     setLoading(true);
-    await handleMeasurements(selectedMeterValue, selectedVariableValues, startDate, endDate, "DAYS");
+    await handleMeasurements(startDate, endDate, "DAYS");
     setLoading(false);
-  }
-
-  function computeSelectVariableName() {
-    const selVariables = variables.filter((variable) =>
-      selectedVariableValues.split(",").includes(variable.id)
-    );
-    const firstVariableString = selVariables.map(
-      (variable) => variable.name + " - " + variable.acronym
-    )[0];
-    if (selVariables.length > 1) {
-      return firstVariableString + " e mais " + (selVariables.length - 1);
-    }
-    return firstVariableString;
   }
 
   return (
@@ -94,42 +102,38 @@ export const DashFilter = ({
           }}
           direction={"row"}
         >
-          <Dropdown>
-            <Dropdown.Button css={{ tt: "capitalize" }}>
-              {selectedMeterValue
-                ? meters.find((meter) => meter.id === selectedMeterValue)?.name
-                : "Selecione um Medidor"}
-            </Dropdown.Button>
-            <Dropdown.Menu
-              aria-label="Single selection actions"
-              selectionMode="single"
-              selectedKeys={selectedMeter}
-              onSelectionChange={setSelectedMeter}
-            >
-              {meters.map((meter) => (
-                <Dropdown.Item key={meter.id}>{meter.name}</Dropdown.Item>
-              ))}
-            </Dropdown.Menu>
-          </Dropdown>
-          <Dropdown>
-            <Dropdown.Button css={{ tt: "capitalize", width: "250px" }}>
-              {selectedVariableValues
-                ? computeSelectVariableName()
-                : "Selecione uma Variável"}
-            </Dropdown.Button>
-            <Dropdown.Menu
-              aria-label="Single selection actions"
-              selectionMode="multiple"
-              selectedKeys={selectedVariable}
-              onSelectionChange={setSelectedVariable}
-            >
-              {variables.map((variable) => (
-                <Dropdown.Item key={variable.id}>
-                  {variable.name + " (" + variable.unit + ")"}
-                </Dropdown.Item>
-              ))}
-            </Dropdown.Menu>
-          </Dropdown>
+          <Input
+            placeholder="Pesquise pelo nome ou sigla de um medidor..."
+            width="400px"
+            onChange={(e) => {
+              clearTimeout(typingTimer);
+              typingTimer = setTimeout(() => {
+                searchMeters(e.target.value);
+              }, doneTypingInterval);
+            }}
+          />
+          {meters.length > 0 && (
+            <Dropdown>
+              <Dropdown.Button css={{ tt: "capitalize" }}>
+                {selectedMeter.size > 0
+                  ? meters.find(
+                      (meter) => meter.id === Array.from(selectedMeter)[0]
+                    )?.name
+                  : "Selecione um Medidor"}
+              </Dropdown.Button>
+              <Dropdown.Menu
+                aria-label="Single selection actions"
+                selectionMode="single"
+                selectedKeys={selectedMeter}
+                onSelectionChange={onMeterSelection}
+              >
+                {meters.map((meter) => (
+                  <Dropdown.Item key={meter.id}>{meter.name}</Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
+          )}
+
           <Input
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}

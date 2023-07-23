@@ -1,15 +1,21 @@
 import { Box } from "@/components/styles/box";
 import { Flex } from "@/components/styles/flex";
 import { getPublicBaseUrl } from "@/shared/utils/apiUtil";
-import { Measurements, Meter, StatisticalMeasurement, Variable } from "@/shared/utils/types";
-import { Grid } from "@nextui-org/react";
+import {
+  Measurements,
+  Meter,
+  StatisticalMeasurement,
+  Variable,
+} from "@/shared/utils/types";
+import { Card, Grid, Image, Text } from "@nextui-org/react";
 import React from "react";
 import { toast } from "react-toastify";
 import { DashFilter } from "./dash-filter";
-import { TabelaAnalitica } from "./tabela-analitica";
-import { TabelaEstatisticas } from "./tabela-estatisticas";
 import GraficoMedicoes from "./grafico-medicoes";
 import NormalDistribution from "./normal-distribution";
+import SelecaoVariaveis from "./selecao-variaveis";
+import { TabelaAnalitica } from "./tabela-analitica";
+import { TabelaEstatisticas } from "./tabela-estatisticas";
 
 export type AnalyticMeasurement = {
   variableName: string;
@@ -18,45 +24,40 @@ export type AnalyticMeasurement = {
   variableUnit?: string;
 };
 
-type DashboardAnaliseMedidorProps = {
-  variables: Variable[];
-  meters: Meter[];
-};
-export const DashboardAnaliseMedidor = ({
-  variables,
-  meters,
-}: DashboardAnaliseMedidorProps) => {
-  const [analyticMeasurements, setAnalyticMeasurements] = React.useState<
-    AnalyticMeasurement[]
-  >([]);
-  const [statisticalMeasurements, setStatisticalMeasurements] = React.useState<
-    StatisticalMeasurement[]
-  >([]);
+export const DashboardAnaliseMedidor = () => {
   const [measurements, setMeasurements] = React.useState<ApexAxisChartSeries>(
     []
   );
   const [distributions, setDistributions] = React.useState<ApexAxisChartSeries>(
     []
   );
+  const [analyticMeasurements, setAnalyticMeasurements] =
+    React.useState<AnalyticMeasurement[]>();
+  const [statisticalMeasurements, setStatisticalMeasurements] = React.useState<
+    StatisticalMeasurement[]
+  >([]);
   const [granularity, setGranularity] = React.useState<string>("DAYS");
-  const [selectedMeter, setSelectedMeter] = React.useState<string>("");
-  const [selectedVariables, setSelectedVariables] = React.useState<string>("");
+  const [selectedMeter, setSelectedMeter] = React.useState<Meter>();
+  const [selectedVariables, setSelectedVariables] =
+    React.useState<Variable[]>();
+
   async function handleMeasurements(
-    selectedMeterValue: string,
-    selectedVariableValues: string,
     startDate: Date | string,
     endDate: Date | string,
     newGranularity: string
   ) {
+    if (!selectedVariables || selectedVariables?.length === 0) {
+      toast.error("Selecione ao menos uma variável!");
+      return;
+    }
     const params = new URLSearchParams({
-      meterID: selectedMeterValue,
-      variables: selectedVariableValues,
+      meterID: selectedMeter?.id || "",
+      variables: selectedVariables.map((v) => v.id).join(","),
       granularity: newGranularity || granularity,
       grouping: true.toString(),
     });
     setGranularity(newGranularity);
-    setSelectedMeter(selectedMeterValue);
-    setSelectedVariables(selectedVariableValues);
+
     if (startDate) {
       params.append("startDate", new Date(startDate).toISOString());
     }
@@ -112,13 +113,7 @@ export const DashboardAnaliseMedidor = ({
         endPickedDate.setUTCMinutes(59, 59, 999);
         break;
     }
-    handleMeasurements(
-      selectedMeter,
-      selectedVariables,
-      startPickedDate,
-      endPickedDate,
-      newGranularity
-    );
+    handleMeasurements(startPickedDate, endPickedDate, newGranularity);
   }
   return (
     <Box css={{ overflow: "hidden", height: "100%" }}>
@@ -149,32 +144,89 @@ export const DashboardAnaliseMedidor = ({
           direction={"column"}
         >
           <DashFilter
-            meters={meters}
-            variables={variables}
+            handleMeterSelection={(meter) => setSelectedMeter(meter)}
             handleMeasurements={handleMeasurements}
           />
-          <Grid.Container gap={2} justify="center">
-            <Grid lg={9} md={12}>
-              <GraficoMedicoes
-                granularity={granularity}
-                measurements={measurements}
-                handleMeasurementSelection={handleMeasurementSelection}
+          <Grid.Container justify="center">
+            <Grid lg={12} md={12} css={{ paddingBottom: 12 }}>
+              <SelecaoVariaveis
+                key={selectedMeter?.id}
+                variables={selectedMeter?.variables}
+                handleSelection={(variables) => setSelectedVariables(variables)}
               />
             </Grid>
-            <Grid lg={3} md={12}>
-              <NormalDistribution distributions={distributions} />
-            </Grid>
-            <Grid lg={9} md={12}>
-              <TabelaAnalitica
-                key={analyticMeasurements.length}
-                analyticMeasurements={analyticMeasurements}
-              />
-            </Grid>
-            <Grid lg={3} md={12}>
-              <TabelaEstatisticas
-                key={statisticalMeasurements.length}
-                statisticalMeasurements={statisticalMeasurements}
-              />
+            <Grid lg={12} md={12}>
+              {selectedMeter && selectedVariables && analyticMeasurements ? (
+                <Grid.Container
+                  gap={2}
+                  justify="center"
+                  css={{ paddingLeft: 0, paddingRight: 0 }}
+                >
+                  <Grid lg={9} md={12}>
+                    <GraficoMedicoes
+                      granularity={granularity}
+                      measurements={measurements}
+                      handleMeasurementSelection={handleMeasurementSelection}
+                    />
+                  </Grid>
+                  <Grid lg={3} md={12}>
+                    <NormalDistribution distributions={distributions} />
+                  </Grid>
+                  <Grid lg={9} md={12}>
+                    <TabelaAnalitica
+                      key={analyticMeasurements.length}
+                      analyticMeasurements={analyticMeasurements}
+                    />
+                  </Grid>
+                  <Grid lg={3} md={12}>
+                    <TabelaEstatisticas
+                      key={statisticalMeasurements.length}
+                      statisticalMeasurements={statisticalMeasurements}
+                    />
+                  </Grid>
+                </Grid.Container>
+              ) : (
+                <Card
+                  css={{
+                    borderRadius: "$xl",
+                    px: "$6",
+                    height: "500px",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Card.Header>
+                    <Flex
+                      css={{
+                        width: "100%",
+                        px: "$12",
+                        mt: "$8",
+                        "@xsMax": { px: "$10" },
+                        gap: "$12",
+                      }}
+                      direction={"column"}
+                    >
+                      <Image
+                        src="/estatisticas.png"
+                        height={"300px"}
+                        alt="icone marcador verde"
+                      />
+                      <Text
+                        h3
+                        css={{
+                          width: "100%",
+                          textAlign: "center",
+                          "@lg": {
+                            textAlign: "center",
+                          },
+                          color: "gray",
+                        }}
+                      >
+                        Selecione um Medidor e uma ou mais Variáveis
+                      </Text>
+                    </Flex>
+                  </Card.Header>
+                </Card>
+              )}
             </Grid>
           </Grid.Container>
         </Flex>
